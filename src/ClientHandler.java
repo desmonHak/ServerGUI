@@ -1,5 +1,6 @@
 package src;
 
+import src.Commands.AutoRefreshScreen;
 import src.Commands.Command;
 import src.Commands.DrawPixel;
 import src.Commands.SetTitle;
@@ -42,6 +43,7 @@ public class ClientHandler implements Runnable {
         // comandos:
         map.put("setTitle", SetTitle.class);
         map.put("drawPixel", DrawPixel.class);
+        map.put("autoUpdateScreen", AutoRefreshScreen.class);
         return map;
     }
 

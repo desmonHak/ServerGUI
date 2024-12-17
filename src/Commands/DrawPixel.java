@@ -4,7 +4,6 @@ import src.GUI;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class DrawPixel extends Command {
