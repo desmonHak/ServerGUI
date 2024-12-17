@@ -51,6 +51,7 @@ public class Core extends JPanel {
             }
         } catch (IOException e) {
             System.out.println("Error al iniciar el servidor: " + e.getMessage());
+            System.exit(1);
         }
     }
 
@@ -80,6 +81,6 @@ public class Core extends JPanel {
         frame.setResizable(false);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        dotDrawer.start(4500);
+        dotDrawer.start(450);
     }
 }
