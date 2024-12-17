@@ -88,14 +88,25 @@ int main(){
 
     // Bucle interactivo
     while (1) {
-    // Limpiar buffers
-    memset(buffer, 0, BUFFER_SIZE);
-    memset(input, 0, BUFFER_SIZE);
+        // Limpiar buffers
+        memset(buffer, 0, BUFFER_SIZE);
+        memset(input, 0, BUFFER_SIZE);
 
-    // Dibujar una línea diagonal
-    for (unsigned int i = 0; i < 1024; i++) { 
-        // Crear el comando drawPixel<x, y, (r,g,b)>
-        snprintf(input, BUFFER_SIZE, "drawPixel<%d, %d, (255,0,255)>", i, i);
+        // Leer entrada del usuario
+        printf("Cliente> ");
+        if (fgets(input, BUFFER_SIZE, stdin) == NULL) {
+            printf("Error al leer la entrada");
+            break;
+        }
+
+        // Remover salto de línea al final
+        input[strcspn(input, "\n")] = '\0';
+
+        // Salir si el usuario escribe "exit"
+        if (strcmp(input, "exit") == 0) {
+            printf("Cerrando conexión...\n");
+            break;
+        }
 
         // Agregar delimitador de línea al mensaje
         strcat(input, "\r\n");
@@ -120,11 +131,6 @@ int main(){
         buffer[bytes_recibidos] = '\0'; // Asegurar que el buffer termina en '\0'
         printf("Servidor> %s\n", buffer);
     }
-
-    // Salir del bucle si es necesario
-    break;
-}
-
 
     // Cerrar el socket
     close_t(sockfd);
