@@ -10,34 +10,68 @@ import java.io.*;
 import java.net.Socket;
 import java.util.HashMap;
 
+/**
+ * Clase encargada de manejar la comunicación con un cliente conectado al servidor.
+ * Recibe las solicitudes del cliente, las procesa, ejecuta los comandos correspondientes
+ * y envía respuestas de vuelta al cliente.
+ */
 public class ClientHandler implements Runnable {
 
+    /** Socket de comunicación con el cliente */
     private Socket clientSocket;
+
+    /** Flujo de entrada de datos desde el cliente */
     private InputStream in;
+
+    /** Flujo de salida de datos hacia el cliente */
     private PrintWriter out;
+
+    /** Ventana de la interfaz gráfica */
     private JFrame windows;
-    /*
+
+    /**
      * El contador de mensajes nulos permite cerrar la conexion a los clientes que envian
      * peticiones sin datos. Puede ocurrir que el cliente se desconecte sin notificar al servidor.
      * El servidor entrara en un bucle indefinido recibiendo ningun tipo de datos, limitando este numero
      * podemos cerrar este handler.
      */
     private  int counter_null_msj     = 0;
-    public   int counter_null_msj_max = 3; // numero maximo de peticiones nulas a permitir
 
+    /** Número máximo de mensajes nulos permitidos antes de cerrar la conexión */
+    public   int counter_null_msj_max = 3;
+
+    /** Mapa que asocia los identificadores de comandos con sus clases correspondientes */
     private HashMap<String, Class<? extends Command>> commandMap = new HashMap<>();
 
+    /**
+     * Constructor de la clase `ClientHandler`.
+     *
+     * @param socket El socket de conexión con el cliente.
+     * @param counter_null_msj_max El número máximo de mensajes nulos permitidos.
+     */
     public ClientHandler(Socket socket, int counter_null_msj_max) {
         this.clientSocket           = socket;
         this.counter_null_msj_max   = counter_null_msj_max;
         this.commandMap             = initializeCommandMap();
     }
+
+    /**
+     * Constructor de la clase `ClientHandler`.
+     *
+     * @param socket El socket de conexión con el cliente.
+     */
     public ClientHandler(Socket socket) {
         this.clientSocket           = socket;
         this.windows                = GUI.frame;
         this.commandMap             = initializeCommandMap();
     }
 
+    /**
+     * Inicializa el mapa de comandos que asocia los identificadores con las clases
+     * de los comandos correspondientes.
+     *
+     * @return El mapa de comandos.
+     */
     private HashMap<String, Class<? extends Command>> initializeCommandMap() {
         HashMap<String, Class<? extends Command>> map = new HashMap<>();
         // comandos:
@@ -47,7 +81,10 @@ public class ClientHandler implements Runnable {
         return map;
     }
 
-
+    /**
+     * Método principal que maneja la comunicación con el cliente.
+     * Lee los mensajes del cliente, los procesa y responde con el resultado o un error.
+     */
     @Override
     public void run() {
         try {
@@ -108,7 +145,13 @@ public class ClientHandler implements Runnable {
     }
 
 
-
+    /**
+     * Procesa la solicitud recibida, identificando el comando y ejecutándolo.
+     * Si el comando no es válido, retorna un mensaje de error.
+     *
+     * @param request La solicitud recibida desde el cliente.
+     * @return La respuesta al cliente, que puede ser el resultado del comando o un mensaje de error.
+     */
     private String processRequest(String request) {
         if (request.isEmpty()) return "";
 

@@ -6,11 +6,45 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Objects;
 
+/**
+ * Esta clase extiende {@link Command} y está encargada de procesar el comando para dibujar un píxel en la interfaz gráfica.
+ * El comando "drawPixel" toma las coordenadas x, y y un color (representado por tres valores RGB) para dibujar un píxel en la pantalla.
+ *
+ * Ejemplo de comando:
+ * <pre>
+ * drawPixel&lt;350, 350, (255, 255, 255)&gt;
+ * </pre>
+ * Este comando dibuja un píxel blanco en las coordenadas (350, 350).
+ */
 public class DrawPixel extends Command {
+
+    /**
+     * Constructor de la clase {@link DrawPixel}.
+     *
+     * @param comamand El comando como una cadena de texto que se procesa para extraer los parámetros.
+     * @param windows La ventana principal (JFrame) para realizar la actualización gráfica.
+     */
     public DrawPixel(String comamand, JFrame windows) {
         super(comamand, windows);
     }
 
+    /**
+     * Ejecuta el comando "drawPixel", que dibuja un píxel en la pantalla en las coordenadas proporcionadas con el color especificado.
+     *
+     * El formato del comando es "drawPixel&lt;x, y, (r, g, b)&gt;", donde:
+     * - x: la coordenada horizontal.
+     * - y: la coordenada vertical.
+     * - r, g, b: los valores del color en formato RGB (0-255).
+     *
+     * Ejemplo:
+     * Si el comando recibido es:
+     * <pre>
+     * drawPixel&lt;350, 350, (255, 255, 255)&gt;
+     * </pre>
+     * Este método dibujará un píxel blanco en la posición (350, 350) en la pantalla.
+     *
+     * @return null
+     */
     @Override
     public Objects exec(){
         if (this.id.equalsIgnoreCase("drawPixel")) {

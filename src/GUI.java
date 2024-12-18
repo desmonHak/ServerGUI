@@ -4,20 +4,40 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+/**
+ * Clase que representa la interfaz gráfica del emulador 8086.
+ * Esta clase extiende `JPanel` y se encarga de gestionar el repintado de la
+ * pantalla, así como de la visualización del contenido gráfico mediante un
+ * buffer de imagen.
+ */
 public class GUI extends JPanel {
 
+    /** Dimensiones de la pantalla del dispositivo */
     private static final Dimension TAMANO_PANTALLA = Toolkit.getDefaultToolkit().getScreenSize();
 
+    /** Altura de la pantalla */
     static final int ALTURA = TAMANO_PANTALLA.height;
+
+    /** Ancho de la pantalla */
     static final int ANCHO = TAMANO_PANTALLA.width;
 
-
+    /** Instancia de la clase GUI, utilizada para repintar la interfaz */
     public static GUI dotDrawer;
+
+    /** Ventana principal del emulador */
     public static JFrame frame;
+
+    /** Buffer de imagen para dibujar el contenido */
     private BufferedImage buffer;
+
+    /** Hilo para actualizar la pantalla */
     public static RepaintThread update_thread;
 
-
+    /**
+     * Constructor de la clase `GUI`. Inicializa la ventana y el buffer de imagen.
+     * Calcula el tamaño de la ventana en función de la resolución de pantalla y
+     * establece un fondo negro para la interfaz.
+     */
     public GUI(){
         int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
 
@@ -56,11 +76,26 @@ public class GUI extends JPanel {
         repaint_all(); // Pinta el fondo negro al inicio
     }
 
+    /**
+     * Dibuja un píxel en la pantalla en la ubicación especificada con el color dado.
+     *
+     * @param g El objeto `Graphics` utilizado para dibujar.
+     * @param self_color El color del píxel a dibujar.
+     * @param x La coordenada X del píxel.
+     * @param y La coordenada Y del píxel.
+     */
     private void drawDot(Graphics g, Color self_color, int x, int y) {
         g.setColor(self_color); // Set the color of the dot
         g.fillRect(x, y, 1, 1); // Draw a single pixel
     }
 
+    /**
+     * Actualiza el color de un píxel en la pantalla.
+     *
+     * @param color El color que debe tener el píxel.
+     * @param x La coordenada X del píxel.
+     * @param y La coordenada Y del píxel.
+     */
     public void updatePixel(Color color, int x, int y) {
         SwingUtilities.invokeLater(() -> {
             drawPixel(color, x, y);
@@ -68,6 +103,9 @@ public class GUI extends JPanel {
         });
     }
 
+    /**
+     * Solicita el repintado completo de la pantalla.
+     */
     public void repaint_all() {
         SwingUtilities.invokeLater(() -> {
             revalidate();
@@ -75,12 +113,25 @@ public class GUI extends JPanel {
         });
     }
 
+    /**
+     * Dibuja un píxel en el buffer de imagen.
+     *
+     * @param color El color del píxel.
+     * @param x La coordenada X del píxel.
+     * @param y La coordenada Y del píxel.
+     */
     public void drawPixel(Color color, int x, int y) {
         if (x >= 0 && x < buffer.getWidth() && y >= 0 && y < buffer.getHeight()) {
             buffer.setRGB(x, y, color.getRGB());
         }
     }
 
+    /**
+     * Sobrescribe el método `paintComponent` de `JPanel` para pintar el contenido
+     * del buffer de imagen en el panel de la interfaz.
+     *
+     * @param g El objeto `Graphics` utilizado para dibujar.
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -88,6 +139,5 @@ public class GUI extends JPanel {
         g2d.drawImage(buffer, 0, 0, this);
         g2d.dispose();
     }
-
 
 }
