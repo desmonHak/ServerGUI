@@ -1,5 +1,6 @@
 JAVA=java
 C=gcc
+CPP=g++
 ESXTENSION=exe
 
 
@@ -22,7 +23,7 @@ DIR_BIN=$(DIR_OUTPUT)
 
 CFLAGS=-O3 -I$(DIR_LIB_CSGUI_INCLUDE)
 CFLAGS_OBLECT=$(CFLAGS) -c
-LD_FLAGS=
+LD_FLAGS=-lWs2_32
 
 
 CLEAR_COMMAND=rm -rf
@@ -34,6 +35,15 @@ run: ClientHandler.class Core.class
 c: code.$(ESXTENSION) cli.$(ESXTENSION)
 	$(MAKE) code.$(ESXTENSION)
 
+cpp: code_cpp.$(ESXTENSION)
+	$(MAKE) code_cpp.$(ESXTENSION)
+
+code_cpp.$(ESXTENSION): $(DIR_LIB_CSGUI)/code.cpp $(DIR_BIN)/csgui.opp
+	$(CPP) $(CFLAGS) $^ -o $@ $(LD_FLAGS)
+
+$(DIR_BIN)/csgui.opp: $(DIR_LIB_CSGUI_SRC)/csgui.cpp
+	$(CPP) $(CFLAGS_OBLECT) $^ -o $@ -DLINKER_MODO_ON
+
 code.$(ESXTENSION): $(DIR_LIB_CSGUI)/code.c $(DIR_BIN)/csgui.o
 	$(C) $(CFLAGS) $^ -o $@ $(LD_FLAGS)
 
@@ -41,7 +51,7 @@ cli.$(ESXTENSION): $(DIR_LIB_CSGUI)/cli.c $(DIR_BIN)/csgui.o
 	$(C) $(CFLAGS) $^ -o $@ $(LD_FLAGS)
 
 $(DIR_BIN)/csgui.o: $(DIR_LIB_CSGUI_SRC)/csgui.c
-	$(C) $(CFLAGS_OBLECT) $^ -o $@
+	$(C) $(CFLAGS_OBLECT) $^ -o $@ -DLINKER_MODO_ON
 
 Core.class: Core.java
 	javac -d $(DIR_OUTPUT_CLASS) $^
