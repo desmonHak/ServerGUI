@@ -68,10 +68,8 @@ int Csgui::drawPixel(uint64_t x, uint64_t y, rgb color){
 }
 
 std::string Csgui::recv_data(int size){
-    char* buffer = new char[size];
-    int bytes_read = recv(client, buffer, size, 0);
-    std::string response(buffer, bytes_read);
-    delete[] buffer;
+    std::string response(size, 0);
+    recv(client, response.data(), size, 0);
     return response;
 }
 
