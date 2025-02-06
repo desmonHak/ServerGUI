@@ -1,4 +1,32 @@
 package src.Commands;
 
-public class ResetKeyboard {
+import src.GUI;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.Objects;
+
+public class ResetKeyboard extends Command {
+    /**
+     * Constructor que inicializa un comando a partir de una cadena recibida.
+     * Analiza la cadena para extraer el identificador del comando y sus parámetros.
+     *
+     * @param command La cadena que representa el comando completo.
+     * @param windows La ventana de la interfaz gráfica donde se ejecutará el comando.
+     */
+    public ResetKeyboard(String command, JFrame windows) {
+        super(command, windows);
+    }
+
+    @Override
+    public Objects exec(PrintWriter out){
+        if (this.id.equalsIgnoreCase("resetKeyboard")) {
+            // getKeyboard<>
+            GUI.BufferKeboard = ""; // variar el buffer
+        }
+        this.ret_client(out); // retornar
+        return null;
+    }
 }

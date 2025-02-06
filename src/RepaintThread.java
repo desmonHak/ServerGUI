@@ -7,7 +7,7 @@ package src;
  * repintar la interfaz a una tasa constante (aproximadamente 60 FPS) si
  * el estado de la variable `estatus` es verdadero.
  */
-public class RepaintThread  implements Runnable{
+public class RepaintThread  implements Runnable {
 
     /**
      * Indica si la pantalla debe actualizarse o no. Si el estado es `true`,

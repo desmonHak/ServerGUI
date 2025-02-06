@@ -2,7 +2,10 @@ package src;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 /**
  * Clase que representa la interfaz gráfica del emulador 8086.
@@ -10,7 +13,7 @@ import java.awt.image.BufferedImage;
  * pantalla, así como de la visualización del contenido gráfico mediante un
  * buffer de imagen.
  */
-public class GUI extends JPanel {
+public class GUI extends JPanel implements KeyListener {
 
     /** Dimensiones de la pantalla del dispositivo */
     private static final Dimension TAMANO_PANTALLA = Toolkit.getDefaultToolkit().getScreenSize();
@@ -33,12 +36,15 @@ public class GUI extends JPanel {
     /** Hilo para actualizar la pantalla */
     public static RepaintThread update_thread;
 
+    public static String BufferKeboard; // String donde almacenar todas las teclas pulsadas
+
     /**
      * Constructor de la clase `GUI`. Inicializa la ventana y el buffer de imagen.
      * Calcula el tamaño de la ventana en función de la resolución de pantalla y
      * establece un fondo negro para la interfaz.
      */
     public GUI(){
+        BufferKeboard = "";
         int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
 
         double scaleFactor = dpi / 96.0; // 96 es el valor estándar de DPI
@@ -61,7 +67,7 @@ public class GUI extends JPanel {
         //frame.setUndecorated(true);  // Elimina los bordes de la ventana
 
         frame.setLocation(ANCHO/4, ALTURA/4); //localizacion de la pantalla
-        frame.setTitle("8086 Emulator");
+        frame.setTitle("Titulo");
 
         frame.setResizable(false);
 
@@ -71,6 +77,12 @@ public class GUI extends JPanel {
 
         frame.setPreferredSize(new Dimension(scaledWidth, scaledHeight));
         frame.pack(); // no usar setSize, no funciona
+
+        /* Añadir teclado: */
+        this.addKeyListener(this);
+        setFocusable(true);
+        setFocusTraversalKeysEnabled(false);
+
 
         frame.setVisible(true);
         repaint_all(); // Pinta el fondo negro al inicio
@@ -140,4 +152,29 @@ public class GUI extends JPanel {
         g2d.dispose();
     }
 
+    /*
+     * si la tecla es presionada una o permanentemente
+     */
+    @Override
+    public void keyTyped(KeyEvent e) {
+        //System.out.println("1 " + e.getKeyChar());
+        BufferKeboard += e.getKeyChar();
+        System.out.println(BufferKeboard);
+    }
+    /*
+
+     * si la tecla es presionada permanentemente
+     */
+    @Override
+    public void keyPressed(KeyEvent e) {
+        //System.out.println("2 " + e.getKeyChar());
+    }
+
+    /*
+     * si la tecla es presionada y luego se libera, al iberarla, se ejecuta la funcion
+     */
+    @Override
+    public void keyReleased(KeyEvent e) {
+        //System.out.println("3 " + e.getKeyChar());
+    }
 }

@@ -1,6 +1,7 @@
 package src.Commands;
 
 import javax.swing.*;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -94,4 +95,18 @@ public class Command {
     public Objects exec(){
         return null;
     }
+    public Objects exec(PrintWriter out){
+        return null;
+    }
+
+    /*
+     * Permite devolver datos a un cliente desde una clase que herede de comando.
+     */
+    public void ret_client(PrintWriter out) {
+        out.println("return[%s]<>".formatted(this.id));
+    }
+    public void ret_client(PrintWriter out, String data_client) {
+        out.println("return[%s]<%s>".formatted(this.id, data_client));
+    }
+
 }

@@ -4,6 +4,7 @@ import src.GUI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.PrintWriter;
 import java.util.Objects;
 
 /**
@@ -46,7 +47,7 @@ public class DrawPixel extends Command {
      * @return null
      */
     @Override
-    public Objects exec(){
+    public Objects exec(PrintWriter out){
         if (this.id.equalsIgnoreCase("drawPixel")) {
             // drawPixel<350, 350, (255,255,255)>
 
@@ -65,6 +66,7 @@ public class DrawPixel extends Command {
             GUI.dotDrawer.repaint_all();
 
         }
+        this.ret_client(out); // retornar
         return null;
     }
 }

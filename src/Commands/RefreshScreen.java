@@ -1,5 +1,8 @@
 package src.Commands;
 
+import src.GUI;
+
+import java.io.PrintWriter;
 import java.util.Objects;
 import javax.swing.*;
 
@@ -9,7 +12,7 @@ public class RefreshScreen extends Command {
     }
 
     @Override
-    public Objects exec() {
+    public Objects exec(PrintWriter out) {
         if (this.id.equalsIgnoreCase("refreshScreen")) {
             try {
                 Process process = Runtime.getRuntime().exec("xrefresh");
@@ -18,6 +21,7 @@ public class RefreshScreen extends Command {
                 e.printStackTrace();
             }
         }
+        this.ret_client(out); // retornar
         return null;
     }
 }

@@ -1,9 +1,6 @@
 package src;
 
-import src.Commands.AutoRefreshScreen;
-import src.Commands.Command;
-import src.Commands.DrawPixel;
-import src.Commands.SetTitle;
+import src.Commands.*;
 
 import javax.swing.*;
 import java.io.*;
@@ -75,9 +72,11 @@ public class ClientHandler implements Runnable {
     private HashMap<String, Class<? extends Command>> initializeCommandMap() {
         HashMap<String, Class<? extends Command>> map = new HashMap<>();
         // comandos:
-        map.put("setTitle", SetTitle.class);
-        map.put("drawPixel", DrawPixel.class);
+        map.put("setTitle",         SetTitle.class);
+        map.put("drawPixel",        DrawPixel.class);
         map.put("autoUpdateScreen", AutoRefreshScreen.class);
+        map.put("getKeyboard",      GetKeyboard.class);
+        map.put("resetKeyboard",    ResetKeyboard.class);
         return map;
     }
 
@@ -107,7 +106,7 @@ public class ClientHandler implements Runnable {
                 }
 
                 // si no se envio informacion, aumentar el contador de mensajes nulos
-                String response;
+                String response = null;
                 if (request.isEmpty()) {
                     counter_null_msj++;
                     response = "\n";
@@ -116,10 +115,11 @@ public class ClientHandler implements Runnable {
                     // Enviar respuesta al cliente
                     response = processRequest(request.toString());
                 }
-                out.println(response);
-
-                if (response.equalsIgnoreCase("exit")){
-                    leave = false;
+                if (response != null) { // si se obtuvo una respuesta a enviar
+                    out.println(response);
+                    if (response.equalsIgnoreCase("exit")){
+                        leave = false;
+                    }
                 }
                 if (counter_null_msj == this.counter_null_msj_max) {
                     leave = false;
@@ -153,6 +153,7 @@ public class ClientHandler implements Runnable {
      * @return La respuesta al cliente, que puede ser el resultado del comando o un mensaje de error.
      */
     private String processRequest(String request) {
+        Object data_client = null;
         if (request.isEmpty()) return "";
 
         Command command = new Command(request, this.windows);
@@ -177,7 +178,12 @@ public class ClientHandler implements Runnable {
                     Command specificCommand = commandClass.getDeclaredConstructor(String.class, JFrame.class)
                             .newInstance(request, this.windows);
                     // llamar al metodo exec del objeto:
-                    specificCommand.exec();
+                    data_client = specificCommand.exec(out);
+
+                    // si el comando no devuelve null, quiere decir que se debe enviar los datos
+                    //specificCommand.ret_client(out, (String) data_client);
+                    return (String) data_client;
+
                 } catch (Exception e) {
                     return "return[%s]<Error executing command, %s>".formatted(command.id, e.getMessage());
                 }
@@ -187,8 +193,5 @@ public class ClientHandler implements Runnable {
         } else {
             return "return[%s]<Command is null>".formatted((Object)null);
         }
-
-        return request;
     }
-
 }
