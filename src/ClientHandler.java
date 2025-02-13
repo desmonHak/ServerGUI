@@ -2,9 +2,15 @@ package src;
 
 import java.io.*;
 import java.net.Socket;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import javax.swing.*;
+
+import src.ACL.Groups;
+import src.ACL.SerializableObjects;
+import src.ACL.Users;
 import src.Commands.*;
+import src.Errors.PasswordError;
 
 /**
  * Clase encargada de manejar la comunicación con un cliente conectado al servidor.
@@ -14,13 +20,13 @@ import src.Commands.*;
 public class ClientHandler implements Runnable {
 
     /** Socket de comunicación con el cliente */
-    private Socket clientSocket;
+    public Socket clientSocket;
 
     /** Flujo de entrada de datos desde el cliente */
     private InputStream in;
 
     /** Flujo de salida de datos hacia el cliente */
-    private PrintWriter out;
+    public PrintWriter out;
 
     /** Ventana de la interfaz gráfica */
     private JFrame windows;
@@ -39,16 +45,26 @@ public class ClientHandler implements Runnable {
     /** Mapa que asocia los identificadores de comandos con sus clases correspondientes */
     private HashMap<String, Class<? extends Command>> commandMap = new HashMap<>();
 
+    private SerializableObjects ACL;
+
+    // usuario y grupo del cliente actual, si su session es valida, se tiene el grupo y usuario:
+    Pair<Groups, Users> data_user;
+
     /**
      * Constructor de la clase `ClientHandler`.
      *
      * @param socket El socket de conexión con el cliente.
      * @param counter_null_msj_max El número máximo de mensajes nulos permitidos.
      */
-    public ClientHandler(Socket socket, int counter_null_msj_max) {
+    public ClientHandler(
+            Socket socket,
+            int counter_null_msj_max,
+            SerializableObjects ACL
+    ) {
         this.clientSocket           = socket;
         this.counter_null_msj_max   = counter_null_msj_max;
         this.commandMap             = initializeCommandMap();
+        this.ACL                    = ACL;
     }
 
     /**
@@ -56,10 +72,14 @@ public class ClientHandler implements Runnable {
      *
      * @param socket El socket de conexión con el cliente.
      */
-    public ClientHandler(Socket socket) {
+    public ClientHandler(
+            Socket socket,
+            SerializableObjects ACL
+    ) {
         this.clientSocket           = socket;
         this.windows                = GUI.frame;
         this.commandMap             = initializeCommandMap();
+        this.ACL                    = ACL;
     }
 
     /**
@@ -83,6 +103,20 @@ public class ClientHandler implements Runnable {
         return map;
     }
 
+    private StringBuilder read_line(InputStream in) throws IOException {
+        StringBuilder request = new StringBuilder();
+        int data;
+        while ((data = in.read()) != -1) {
+            // Leer byte por byte y construir la solicitud
+            request.append((char) data);
+            // Si llega un salto de línea (\n), procesamos la línea
+            if (data == '\n') {
+                break;
+            }
+        }
+        return request;
+    }
+
     /**
      * Método principal que maneja la comunicación con el cliente.
      * Lee los mensajes del cliente, los procesa y responde con el resultado o un error.
@@ -95,18 +129,34 @@ public class ClientHandler implements Runnable {
 
             // mientras el cliente no diga que la conexion finalizo, seguir con ella
             boolean leave = true;
+
+            out.println("username: ");
+            String username = read_line(in).toString().trim();
+            data_user = Groups.searchUserNameInGroup(ACL.groups, username);
+            if (data_user == null) {
+                leave = false;
+                out.println("el usuario no existe");
+            } else {
+                out.println("<%s>password: ".formatted(username));
+                String password = read_line(in).toString().trim();
+
+                Users user = data_user.getSecond();
+                try {
+                    // verificar si las credenciales son correctas:
+                    Users credentials = new Users(username, password, user.hash_pass, user.group);
+                } catch (PasswordError e) {
+                    leave = false;
+                    System.out.println("Usuario %s del group %s con hash %s intento acceder con las credenciales %s".
+                            formatted(
+                                username, data_user.getFirst().name, user.hash_pass, password
+                    ));
+                }
+            }
+
+
             while(leave) {
 
-                StringBuilder request = new StringBuilder();
-                int data;
-                while ((data = in.read()) != -1) {
-                    // Leer byte por byte y construir la solicitud
-                    request.append((char) data);
-                    // Si llega un salto de línea (\n), procesamos la línea
-                    if (data == '\n') {
-                        break;
-                    }
-                }
+                StringBuilder request = read_line(in);
 
                 // si no se envio informacion, aumentar el contador de mensajes nulos
                 String response = null;
@@ -135,6 +185,8 @@ public class ClientHandler implements Runnable {
 
         } catch (IOException e) {
             System.out.println("Error en la comunicación con el cliente: " + e.getMessage());
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
         } finally {
             try {
                 if (in != null) in.close();

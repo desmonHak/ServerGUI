@@ -1,4 +1,4 @@
-package src;
+package src.ACL;
 
 import src.Errors.PasswordError;
 
@@ -7,6 +7,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class Users implements Serializable {
+    static final long serialVersionUID = 42L;
 
     public String name_user;
     public String hash_pass;
@@ -17,7 +18,7 @@ public class Users implements Serializable {
         md.update(text.getBytes());
         byte[] digest = md.digest();
         StringBuffer hexString = new StringBuffer();
-        for (int i = 0;i<digest.length;i++) {
+        for (int i = 0; i < digest.length ; i++) {
             hexString.append(Integer.toHexString(0xFF & digest[i]));
         }
         return hexString.toString();
@@ -47,7 +48,7 @@ public class Users implements Serializable {
     /*
      * Compara un hash de password con una posible password
      */
-    Users (
+    public Users(
             String name_user,
             String password,
             String hash_pass,

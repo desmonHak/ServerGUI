@@ -74,3 +74,5 @@ logo_ico_8086_Emulator.h
 *.docx
 *.class
 out
+
+*.dat

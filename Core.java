@@ -1,6 +1,9 @@
 import src.GUI;
 import src.Server;
 
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+
 /**
  * Clase principal que inicializa el servidor y la interfaz gráfica del emulador.
  * Esta clase contiene el punto de entrada para la aplicación, creando una instancia
@@ -14,9 +17,14 @@ public class Core  {
      *
      * @param args Argumentos de línea de comandos (no utilizados en esta aplicación).
      */
-    public static void main(String[] args) {
-        Server server = new Server();
+    public static void main(
+            String[] args
+    ) throws IOException,
+            ClassNotFoundException,
+            NoSuchAlgorithmException
+    {
+        Server server = new Server(450);
         GUI gui = new GUI();
-        server.start(450);
+        server.start();
     }
 }
