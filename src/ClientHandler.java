@@ -1,6 +1,7 @@
 package src;
 
 import src.Commands.*;
+import src.Focus.*;
 
 import javax.swing.*;
 import java.io.*;
@@ -69,7 +70,7 @@ public class ClientHandler implements Runnable {
      *
      * @return El mapa de comandos.
      */
-    private HashMap<String, Class<? extends Command>> initializeCommandMap() {
+    private HashMap <String, Class<? extends Command>>initializeCommandMap() {
         HashMap<String, Class<? extends Command>> map = new HashMap<>();
         // comandos:
         map.put("setTitle",         SetTitle.class);
@@ -77,6 +78,9 @@ public class ClientHandler implements Runnable {
         map.put("autoUpdateScreen", AutoRefreshScreen.class);
         map.put("getKeyboard",      GetKeyboard.class);
         map.put("resetKeyboard",    ResetKeyboard.class);
+        map.put("createFocus",      CreateFocus.class);
+        map.put("deleteFocus",      DeleteFocus.class);
+
         return map;
     }
 
@@ -90,7 +94,7 @@ public class ClientHandler implements Runnable {
             in = clientSocket.getInputStream();
             out = new PrintWriter(clientSocket.getOutputStream(), true);
 
-            // mientras el cliente no dija que la conexion finalizo, seguir con ella
+            // mientras el cliente no diga que la conexion finalizo, seguir con ella
             boolean leave = true;
             while(leave) {
 
