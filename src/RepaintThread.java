@@ -55,7 +55,11 @@ public class RepaintThread  implements Runnable {
     public void run() {
         while (true) {
             if (estatus) {
-                GUI.dotDrawer.repaint_all(); // Llama al repintado general
+                try {
+                    GUI.dotDrawer.repaint_all(); // Llama al repintado genera
+                } catch (NullPointerException e) {
+                    System.out.println("dotDrawer aun no fue instanciada");
+                }
                 try {
                     Thread.sleep(16); // 60 FPS aproximadamente
                 } catch (InterruptedException e) {

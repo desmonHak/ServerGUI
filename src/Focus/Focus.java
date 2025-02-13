@@ -1,5 +1,7 @@
 package src.Focus;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,9 +14,13 @@ public class Focus {
 
     // pila de focos de la ventana principal
     public static HashMap<String, Focus> stack_focus_root = new HashMap<>();
+    public static Focus now_Focus = null; // Foco actual selecionado
 
     // pila de focos del foco actual (local)
     public HashMap<String, Focus> stack_focus_local;
+
+    // información sobre el foco
+    public InformationFocus information;
 
     static String getLastNameFocus(String[] string) {
         return string[string.length - 1];
@@ -30,7 +36,7 @@ public class Focus {
                 print_HashMap(
                     entry.getValue().stack_focus_local, 
                     iteration + 1
-                    );
+                );
             }
         }
     }
@@ -70,12 +76,27 @@ public class Focus {
         this.id_focus = id_focus;
         this.name_focus = name_focus;
         this.stack_focus_local = stack_focus_local;
+        this.information = new InformationFocus(
+            0, 0, 50, 50, Color.BLUE);//GUI.dotDrawer.getBackground());
     }
-
+    public void render(Graphics2D g, BufferedImage guiBuffer) {
+        if (information != null) {
+            information.paint();  // Asegurar que la información del foco se dibuja
+            information.render(g, guiBuffer);
+        }
+    
+        // Renderizar subfocos
+        for (Focus subFocus : stack_focus_local.values()) {
+            subFocus.render(g, guiBuffer);
+        }
+    }
+    
     public Focus(int id_focus, String name_focus) {
         this.id_focus = id_focus;
         this.name_focus = name_focus;
         this.stack_focus_local = new HashMap<>();
+        this.information = new InformationFocus(
+            0, 0, 50, 50, Color.BLUE);//GUI.dotDrawer.getBackground());
 
         // root.foco1.subfoco1
         String[] arr_ids = this.name_focus.split("\\.");
@@ -110,7 +131,7 @@ public class Focus {
                 focus_instance.put(this.name_focus, this);
             }
         }*/
-
+        now_Focus = this; // indicar que el foco actual es el nuevo foco
         print_HashMap(stack_focus_root, 0);
 
     }
@@ -118,5 +139,8 @@ public class Focus {
     @Override
     public String toString() {
         return "%s:%d".formatted(name_focus, id_focus);
+    }
+
+    public void paint(Focus focus){
     }
 }

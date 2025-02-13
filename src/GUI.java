@@ -1,11 +1,11 @@
 package src;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
+import javax.swing.*;
+import src.Focus.Focus;
 
 /**
  * Clase que representa la interfaz gráfica del emulador 8086.
@@ -60,7 +60,9 @@ public class GUI extends JPanel implements KeyListener {
         g2d.fillRect(0, 0, scaledWidth, scaledHeight);
         g2d.dispose();
 
-        update_thread = new RepaintThread(false);
+        update_thread = new RepaintThread(true);
+        // iniciar el hilo que repinta la ventana
+        new Thread(update_thread).start();
 
         frame = new JFrame();
 
@@ -149,6 +151,12 @@ public class GUI extends JPanel implements KeyListener {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.drawImage(buffer, 0, 0, this);
+
+        // Dibujar cada foco dentro del buffer
+        for (Focus focus : Focus.stack_focus_root.values()) {
+            focus.render(g2d, buffer);
+        }
+
         g2d.dispose();
     }
 

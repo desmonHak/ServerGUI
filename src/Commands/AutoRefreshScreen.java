@@ -1,9 +1,9 @@
 package src.Commands;
 
-import src.GUI;
-
+import java.io.PrintWriter;
 import java.util.Objects;
 import javax.swing.*;
+import src.GUI;
 
 /**
  * Esta clase extiende {@link Command} y se encarga de procesar el comando para activar o desactivar la actualización automática de la pantalla.
@@ -44,10 +44,11 @@ public class AutoRefreshScreen extends Command {
      * @return null
      */
     @Override
-    public Objects exec() {
+    public Objects exec(PrintWriter out) {
         if (this.id.equalsIgnoreCase("autoUpdateScreen")) {
             ParamFormatter param = new ParamFormatter(this.params);
             GUI.update_thread.setEstatus(param.asBoolean(0));
+            this.ret_client(out); // retornar
         }
         return null;
     }

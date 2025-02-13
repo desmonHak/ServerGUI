@@ -1,12 +1,10 @@
 package src;
 
-import src.Commands.*;
-import src.Focus.*;
-
-import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
 import java.util.HashMap;
+import javax.swing.*;
+import src.Commands.*;
 
 /**
  * Clase encargada de manejar la comunicación con un cliente conectado al servidor.
@@ -80,7 +78,8 @@ public class ClientHandler implements Runnable {
         map.put("resetKeyboard",    ResetKeyboard.class);
         map.put("createFocus",      CreateFocus.class);
         map.put("deleteFocus",      DeleteFocus.class);
-
+        map.put("getNowFocus",      GetNowFocus.class);
+        map.put("getAttribFocus",      GetAttribFocus.class);
         return map;
     }
 
