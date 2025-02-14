@@ -45,25 +45,39 @@ int main(){
         memset(buffer, 0, BUFFER_SIZE);
         memset(input, 0, BUFFER_SIZE);
 
+        // Recibir respuesta del servidor
+        ssize_t bytes_recibidos = recv(sockfd, buffer, BUFFER_SIZE - 1, 0);
+        if (bytes_recibidos < 0) {
+            printf("Error al recibir la respuesta del servidor");
+            break;
+        } else if (bytes_recibidos == 0) {
+            printf("El servidor cerró la conexión.\n");
+            break;
+        }
+
+        // Mostrar la respuesta del servidor
+        buffer[bytes_recibidos] = '\0'; // Asegurar que el buffer termina en '\0'
+        printf("Servidor> %s\n", buffer);
+
         // Leer entrada del usuario
         printf("Cliente> ");
         if (fgets(input, BUFFER_SIZE, stdin) == NULL) {
             printf("Error al leer la entrada");
             break;
         }
-
+        
         // Remover salto de línea al final
         input[strcspn(input, "\n")] = '\0';
-
+        
         // Salir si el usuario escribe "exit"
         if (strcmp(input, "exit") == 0) {
             printf("Cerrando conexión...\n");
             break;
         }
-
+        
         // Agregar delimitador de línea al mensaje
         strcat(input, "\r\n");
-
+        
         // Enviar el mensaje
         if (send(sockfd, input, strlen(input), 0) < 0) {
             printf("Error al enviar el mensaje");
