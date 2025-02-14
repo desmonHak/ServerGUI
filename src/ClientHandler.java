@@ -99,7 +99,7 @@ public class ClientHandler implements Runnable {
         map.put("createFocus",      CreateFocus.class);
         map.put("deleteFocus",      DeleteFocus.class);
         map.put("getNowFocus",      GetNowFocus.class);
-        map.put("getAttribFocus",      GetAttribFocus.class);
+        map.put("getAttribFocus",   GetAttribFocus.class);
         return map;
     }
 

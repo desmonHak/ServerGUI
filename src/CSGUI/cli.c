@@ -22,6 +22,9 @@ int main(){
         return EXIT_FAILURE;
     }
 
+    int reuse = 1;
+    // enable the socket to reuse the address
+    if (csgui(setsockopt_t)(sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse)) < 0) perror("failed allowing server socket to reuse address");
 
     // Desactivar el algoritmo Nagle
     int flag = 1;
@@ -30,6 +33,42 @@ int main(){
         csgui(close_t)(sockfd);
         return EXIT_FAILURE;
     }
+
+    /**
+     * https://stackoverflow.com/questions/28244082/proper-use-of-getsockopt-and-setsockopt-for-so-rcvtimeo-and-so-sndtimeo
+     * 
+     * No está inicializando ntsnd y ntrcv con el tamaño del búfer disponible 
+     * para getsockopt. Por lo tanto, si el valor aleatorio es mayor o igual al 
+     * tamaño necesario, la llamada tendrá éxito. De lo contrario, fallará con 
+     * EINVAL. Desde la página del manual:
+     * 
+     * Los argumentos optval y optlen se utilizan para acceder a los valores de 
+     * las opciones para setsockopt(). Para getsockopt(), identifican un búfer 
+     * en el que se devolverá el valor de las opciones solicitadas. 
+     * Para getsockopt(), optlen es un argumento de resultado de valor, que 
+     * inicialmente contiene el tamaño del búfer al que apunta optval y se 
+     * modifica al regresar para indicar el tamaño real del valor devuelto. 
+     * Si no se debe proporcionar ni devolver ningún valor de opción, optval 
+     * puede ser NULL.
+     * 
+     * Para solucionar esto, inicialícelos a ambos con sizeof(struct timeval).
+     */
+    struct timeval tout, tsnd, trcv;
+    tout.tv_sec=0;
+    tout.tv_usec=10000; /* microseconds */
+    socklen_t ntrcv = sizeof(ntrcv), ntsnd = sizeof(ntsnd);
+
+    if      (csgui(setsockopt_t)(sockfd, SOL_SOCKET, SO_RCVTIMEO, &trcv, &ntrcv) < 0)       perror("2");
+    else if (csgui(setsockopt_t)(sockfd, SOL_SOCKET, SO_SNDTIMEO, &tsnd, &ntsnd) < 0)       perror("3");
+    else if (csgui(setsockopt_t)(sockfd, SOL_SOCKET, SO_RCVTIMEO, &tout, sizeof(tout)) < 0) perror("4");
+    else if (csgui(setsockopt_t)(sockfd, SOL_SOCKET, SO_SNDTIMEO, &tout, sizeof(tout)) < 0) perror("5");
+    else {
+        printf ("all ok so far in server\n");
+        sleep(1);
+        if (csgui(setsockopt_t)(sockfd, SOL_SOCKET, SO_RCVTIMEO, &trcv, ntrcv) < 0) perror("6");
+        else if (csgui(setsockopt_t)(sockfd, SOL_SOCKET, SO_SNDTIMEO, &tsnd, ntsnd) < 0) perror("7");
+    }
+
 
     if (connect(sockfd, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
         printf("Error al conectar con el servidor");
@@ -45,19 +84,6 @@ int main(){
         memset(buffer, 0, BUFFER_SIZE);
         memset(input, 0, BUFFER_SIZE);
 
-        // Recibir respuesta del servidor
-        ssize_t bytes_recibidos = recv(sockfd, buffer, BUFFER_SIZE - 1, 0);
-        if (bytes_recibidos < 0) {
-            printf("Error al recibir la respuesta del servidor");
-            break;
-        } else if (bytes_recibidos == 0) {
-            printf("El servidor cerró la conexión.\n");
-            break;
-        }
-
-        // Mostrar la respuesta del servidor
-        buffer[bytes_recibidos] = '\0'; // Asegurar que el buffer termina en '\0'
-        printf("Servidor> %s\n", buffer);
 
         // Leer entrada del usuario
         printf("Cliente> ");
