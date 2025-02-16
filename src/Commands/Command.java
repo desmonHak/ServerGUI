@@ -1,5 +1,9 @@
 package src.Commands;
 
+import src.ACL.Groups;
+import src.ACL.Users;
+import src.Pair;
+
 import javax.swing.*;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -95,8 +99,23 @@ public class Command {
     public Objects exec(){
         return null;
     }
-    public Objects exec(PrintWriter out){
+    public Objects exec(PrintWriter out, Pair<Groups, Users> dataUser){
         return null;
+    }
+
+    /**
+     *
+     * @return true si tiene permisos para ejecutar el comando y false si no
+     */
+    public boolean does_he_have_permissions(Pair<Groups, Users> dataUser, Class<? extends DrawPixel>class_call) {
+        Groups group = dataUser.getFirst();
+        Users  user  = dataUser.getSecond();
+        Boolean data = user.commands_permission.get(class_call);
+        // este comando extrañamente no se definio
+
+        // retornar el permiso de este comando:
+        return Objects.requireNonNullElse(data, false);
+        //user.init_commands_permission();
     }
 
     /*

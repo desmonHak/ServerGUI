@@ -3,7 +3,11 @@ package src.Commands;
 import java.io.PrintWriter;
 import java.util.Objects;
 import javax.swing.*;
+
+import src.ACL.Groups;
+import src.ACL.Users;
 import src.Focus.Focus;
+import src.Pair;
 
 public class GetAttribFocus extends Command {
     public GetAttribFocus(String command, JFrame windows) {
@@ -11,7 +15,7 @@ public class GetAttribFocus extends Command {
     }
 
     @Override
-    public Objects exec(PrintWriter out){
+    public Objects exec(PrintWriter out, Pair<Groups, Users> dataUser){
         if (this.id.equalsIgnoreCase("getAttribFocus")) {
             // getAttribFocus<>
             this.ret_client(out, 

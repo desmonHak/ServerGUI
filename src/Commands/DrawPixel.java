@@ -1,6 +1,9 @@
 package src.Commands;
 
+import src.ACL.Groups;
+import src.ACL.Users;
 import src.GUI;
+import src.Pair;
 
 import javax.swing.*;
 import java.awt.*;
@@ -47,7 +50,8 @@ public class DrawPixel extends Command {
      * @return null
      */
     @Override
-    public Objects exec(PrintWriter out){
+    public Objects exec(PrintWriter out, Pair<Groups, Users> dataUser){
+        does_he_have_permissions(dataUser, this.getClass());
         if (this.id.equalsIgnoreCase("drawPixel")) {
             // drawPixel<350, 350, (255,255,255)>
 

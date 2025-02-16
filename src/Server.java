@@ -94,6 +94,8 @@ public class Server {
 
                 } catch (IOException e) {
                     System.out.println("Error al aceptar la conexion: " + e.getMessage());
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
                 }
             }
         } catch (IOException e) {

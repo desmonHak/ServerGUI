@@ -1,6 +1,9 @@
 package src.Commands;
 
+import src.ACL.Groups;
+import src.ACL.Users;
 import src.GUI;
+import src.Pair;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,7 +24,7 @@ public class GetKeyboard extends Command {
     }
 
     @Override
-    public Objects exec(PrintWriter out){
+    public Objects exec(PrintWriter out, Pair<Groups, Users> dataUser){
         if (this.id.equalsIgnoreCase("getKeyboard")) {
             // getKeyboard<>
             this.ret_client(out, "\"%s\"".formatted(GUI.BufferKeboard));

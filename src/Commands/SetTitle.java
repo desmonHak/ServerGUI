@@ -1,6 +1,9 @@
 package src.Commands;
 
+import src.ACL.Groups;
+import src.ACL.Users;
 import src.GUI;
+import src.Pair;
 
 import javax.swing.*;
 import java.io.PrintWriter;
@@ -13,7 +16,7 @@ public class SetTitle extends Command {
     }
 
     @Override
-    public Objects exec(PrintWriter out){
+    public Objects exec(PrintWriter out, Pair<Groups, Users> dataUser){
         if (this.id.equalsIgnoreCase("setTitle")) {
             // setTitle<"hola mundo">
 

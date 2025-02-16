@@ -1,7 +1,10 @@
 package src.Commands;
 
+import src.ACL.Groups;
+import src.ACL.Users;
 import src.GUI;
 import src.Focus.Focus;
+import src.Pair;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,7 +18,7 @@ public class GetNowFocus extends Command {
     }
 
     @Override
-    public Objects exec(PrintWriter out){
+    public Objects exec(PrintWriter out, Pair<Groups, Users> dataUser){
         if (this.id.equalsIgnoreCase("getNowFocus")) {
             // getNowFocus<>
             this.ret_client(out, "\"%s\"".formatted(Focus.now_Focus));

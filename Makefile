@@ -54,10 +54,10 @@ $(DIR_BIN)/csgui.o: $(DIR_LIB_CSGUI_SRC)/csgui.c
 	$(C) $(CFLAGS_OBLECT) $^ -o $@ -DLINKER_MODO_ON
 
 Core.class: Core.java
-	javac -d $(DIR_OUTPUT_CLASS) $^
+	javac -Xlint -d  $(DIR_OUTPUT_CLASS) $^
 
 ClientHandler.class: $(DIR_SRC)/ClientHandler.java
-	javac -d $(DIR_OUTPUT_CLASS) $^
+	javac -Xlint -d $(DIR_OUTPUT_CLASS) $^
 
 install_jdk_linux:
 	sudo apt install openjdk-21-jdk

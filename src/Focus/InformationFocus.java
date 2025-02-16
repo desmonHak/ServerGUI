@@ -11,7 +11,7 @@ public class InformationFocus {
     public Color color;
 
     // Buffer gráfico del foco
-    protected BufferedImage buffer;
+    protected transient BufferedImage buffer;
 
     public InformationFocus(int x, int y, int width, int height, Color color) {
         this.x = x;

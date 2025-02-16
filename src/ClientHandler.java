@@ -3,7 +3,9 @@ package src;
 import java.io.*;
 import java.net.Socket;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 import javax.swing.*;
 
 import src.ACL.Groups;
@@ -11,6 +13,9 @@ import src.ACL.SerializableObjects;
 import src.ACL.Users;
 import src.Commands.*;
 import src.Errors.PasswordError;
+
+import static src.ACL.Users.CLASS_EXCLUIR;
+import static src.ACL.Users.getClassesInPackage;
 
 /**
  * Clase encargada de manejar la comunicación con un cliente conectado al servidor.
@@ -60,7 +65,7 @@ public class ClientHandler implements Runnable {
             Socket socket,
             int counter_null_msj_max,
             SerializableObjects ACL
-    ) {
+    ) throws ClassNotFoundException {
         this.clientSocket           = socket;
         this.counter_null_msj_max   = counter_null_msj_max;
         this.commandMap             = initializeCommandMap();
@@ -75,7 +80,7 @@ public class ClientHandler implements Runnable {
     public ClientHandler(
             Socket socket,
             SerializableObjects ACL
-    ) {
+    ) throws ClassNotFoundException {
         this.clientSocket           = socket;
         this.windows                = GUI.frame;
         this.commandMap             = initializeCommandMap();
@@ -88,10 +93,10 @@ public class ClientHandler implements Runnable {
      *
      * @return El mapa de comandos.
      */
-    private HashMap <String, Class<? extends Command>>initializeCommandMap() {
+    private HashMap <String, Class<? extends Command>>initializeCommandMap() throws ClassNotFoundException {
         HashMap<String, Class<? extends Command>> map = new HashMap<>();
         // comandos:
-        map.put("setTitle",         SetTitle.class);
+        /*map.put("setTitle",         SetTitle.class);
         map.put("drawPixel",        DrawPixel.class);
         map.put("autoUpdateScreen", AutoRefreshScreen.class);
         map.put("getKeyboard",      GetKeyboard.class);
@@ -99,7 +104,26 @@ public class ClientHandler implements Runnable {
         map.put("createFocus",      CreateFocus.class);
         map.put("deleteFocus",      DeleteFocus.class);
         map.put("getNowFocus",      GetNowFocus.class);
-        map.put("getAttribFocus",   GetAttribFocus.class);
+        map.put("getAttribFocus",   GetAttribFocus.class);*/
+
+        getClassesInPackage("src.Commands", CLASS_EXCLUIR);
+        try {
+            Set<Class<?>> commandClasses = getClassesInPackage("src.Commands", CLASS_EXCLUIR);
+            for (Class<?> clazz : commandClasses) {
+                // Verificar que la clase es una subclase de Command antes de agregarla al HashMap
+                if (Command.class.isAssignableFrom(clazz) && !clazz.equals(Command.class)) {
+                    //System.out.println("Clase encontrada: " + clazz.getName());
+                    String name_command = clazz.getSimpleName();
+                    map.put(
+                            Character.toLowerCase(name_command.charAt(0)) + // string del comando (nombre del comando)
+                                    name_command.substring(1),
+                            (Class<? extends Command>) clazz // clase que se ejecutara
+                    );
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return map;
     }
 
@@ -155,7 +179,6 @@ public class ClientHandler implements Runnable {
 
 
             while(leave) {
-
                 StringBuilder request = read_line(in);
 
                 // si no se envio informacion, aumentar el contador de mensajes nulos
@@ -233,7 +256,7 @@ public class ClientHandler implements Runnable {
                     Command specificCommand = commandClass.getDeclaredConstructor(String.class, JFrame.class)
                             .newInstance(request, this.windows);
                     // llamar al metodo exec del objeto:
-                    data_client = specificCommand.exec(out);
+                    data_client = specificCommand.exec(out, data_user);
 
                     // si el comando no devuelve null, quiere decir que se debe enviar los datos
                     //specificCommand.ret_client(out, (String) data_client);
