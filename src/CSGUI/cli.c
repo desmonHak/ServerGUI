@@ -55,20 +55,16 @@ int main(){
      */
     struct timeval tout, tsnd, trcv;
     tout.tv_sec=0;
-    tout.tv_usec=10000; /* microseconds */
+    tout.tv_usec=10000; // 10 ms
     socklen_t ntrcv = sizeof(ntrcv), ntsnd = sizeof(ntsnd);
+    fd_set read_fds;
 
-    if      (csgui(setsockopt_t)(sockfd, SOL_SOCKET, SO_RCVTIMEO, &trcv, &ntrcv) < 0)       perror("2");
-    else if (csgui(setsockopt_t)(sockfd, SOL_SOCKET, SO_SNDTIMEO, &tsnd, &ntsnd) < 0)       perror("3");
-    else if (csgui(setsockopt_t)(sockfd, SOL_SOCKET, SO_RCVTIMEO, &tout, sizeof(tout)) < 0) perror("4");
-    else if (csgui(setsockopt_t)(sockfd, SOL_SOCKET, SO_SNDTIMEO, &tout, sizeof(tout)) < 0) perror("5");
-    else {
-        printf ("all ok so far in server\n");
-        sleep(1);
-        if (csgui(setsockopt_t)(sockfd, SOL_SOCKET, SO_RCVTIMEO, &trcv, ntrcv) < 0) perror("6");
-        else if (csgui(setsockopt_t)(sockfd, SOL_SOCKET, SO_SNDTIMEO, &tsnd, ntsnd) < 0) perror("7");
+    if (csgui(setsockopt_t)(sockfd, SOL_SOCKET, SO_RCVTIMEO, &tout, sizeof(tout)) < 0) {
+        perror("Error al establecer timeout de recepción");
     }
-
+    if (csgui(setsockopt_t)(sockfd, SOL_SOCKET, SO_SNDTIMEO, &tout, sizeof(tout)) < 0) {
+        perror("Error al establecer timeout de envío");
+    }
 
     if (connect(sockfd, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
         printf("Error al conectar con el servidor");
@@ -78,12 +74,47 @@ int main(){
     printf("Conectado al servidor %s:%d\n", SERVER_IP, SERVER_PORT);
     printf("Escribe 'exit' para cerrar la conexión.\n");
 
+
+    struct timeval timeout_select = tout;
     // Bucle interactivo
     while (1) {
         // Limpiar buffers
         memset(buffer, 0, BUFFER_SIZE);
         memset(input, 0, BUFFER_SIZE);
 
+        FD_ZERO(&read_fds);
+        FD_SET(sockfd, &read_fds);
+    
+        // restablecer timeout_select
+        timeout_select = tout;
+        int ready = select(sockfd + 1, &read_fds, NULL, NULL, &timeout_select);        
+        if (ready < 0) {
+            perror("Error en select");
+            break;
+        } else if (ready == 0) {
+            printf("Timeout: no hay datos disponibles\n");
+            send(sockfd, "\n", 2, 0);
+            continue; // Puedes decidir si sigues esperando o cierras la conexión
+        }
+
+        // Recibir respuesta del servidor
+        ssize_t bytes_recibidos = recv(sockfd, buffer, BUFFER_SIZE - 1, 0);
+        if (bytes_recibidos < 0) {
+            if (errno == EWOULDBLOCK || errno == EAGAIN) {
+                printf("Timeout en recv(), intentando de nuevo...\n");
+                continue;
+            } else {
+                perror("Error al recibir la respuesta del servidor");
+                break;
+            }
+        } else if (bytes_recibidos == 0) {
+            printf("El servidor cerró la conexión.\n");
+            break;
+        }
+
+        // Mostrar la respuesta del servidor
+        buffer[bytes_recibidos] = '\0'; // Asegurar que el buffer termina en '\0'
+        printf("Servidor> %s\n", buffer);
 
         // Leer entrada del usuario
         printf("Cliente> ");
@@ -110,19 +141,6 @@ int main(){
             break;
         }
 
-        // Recibir respuesta del servidor
-        ssize_t bytes_recibidos = recv(sockfd, buffer, BUFFER_SIZE - 1, 0);
-        if (bytes_recibidos < 0) {
-            printf("Error al recibir la respuesta del servidor");
-            break;
-        } else if (bytes_recibidos == 0) {
-            printf("El servidor cerró la conexión.\n");
-            break;
-        }
-
-        // Mostrar la respuesta del servidor
-        buffer[bytes_recibidos] = '\0'; // Asegurar que el buffer termina en '\0'
-        printf("Servidor> %s\n", buffer);
     }
 
     // Cerrar el socket

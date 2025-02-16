@@ -13,6 +13,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <errno.h>
 
 #ifdef __linux__
 #include <sys/socket.h>
