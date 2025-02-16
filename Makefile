@@ -32,6 +32,10 @@ CLEAR_DIR=rmdir /s /q
 run: ClientHandler.class Core.class
 	$(JAVA) $(J_FLAGS)
 
+compile_java:
+	for /R src %%f in (*.java) do javac -Xlint -d $(DIR_OUTPUT_CLASS) "%%f"
+
+
 c: code.$(ESXTENSION) cli.$(ESXTENSION)
 	$(MAKE) code.$(ESXTENSION)
 

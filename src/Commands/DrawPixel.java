@@ -8,7 +8,6 @@ import src.Pair;
 import javax.swing.*;
 import java.awt.*;
 import java.io.PrintWriter;
-import java.util.Objects;
 
 /**
  * Esta clase extiende {@link Command} y está encargada de procesar el comando para dibujar un píxel en la interfaz gráfica.
@@ -34,12 +33,12 @@ public class DrawPixel extends Command {
 
     /**
      * Ejecuta el comando "drawPixel", que dibuja un píxel en la pantalla en las coordenadas proporcionadas con el color especificado.
-     *
+     * <p>
      * El formato del comando es "drawPixel&lt;x, y, (r, g, b)&gt;", donde:
      * - x: la coordenada horizontal.
      * - y: la coordenada vertical.
      * - r, g, b: los valores del color en formato RGB (0-255).
-     *
+     * <p>
      * Ejemplo:
      * Si el comando recibido es:
      * <pre>
@@ -50,9 +49,10 @@ public class DrawPixel extends Command {
      * @return null
      */
     @Override
-    public Objects exec(PrintWriter out, Pair<Groups, Users> dataUser){
+    public String exec(PrintWriter out, Pair<Groups, Users> dataUser){
         does_he_have_permissions(dataUser, this.getClass());
-        if (this.id.equalsIgnoreCase("drawPixel")) {
+        if (this.id.equalsIgnoreCase("drawPixel")
+                && does_he_have_permissions(dataUser, this.getClass())) {
             // drawPixel<350, 350, (255,255,255)>
 
             // clase de formateo de datos

@@ -6,10 +6,7 @@ import src.GUI;
 import src.Pair;
 
 import javax.swing.*;
-import java.awt.*;
 import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.Objects;
 
 public class GetKeyboard extends Command {
     /**
@@ -24,8 +21,9 @@ public class GetKeyboard extends Command {
     }
 
     @Override
-    public Objects exec(PrintWriter out, Pair<Groups, Users> dataUser){
-        if (this.id.equalsIgnoreCase("getKeyboard")) {
+    public String exec(PrintWriter out, Pair<Groups, Users> dataUser){
+        if (this.id.equalsIgnoreCase("getKeyboard")
+                && does_he_have_permissions(dataUser, this.getClass())) {
             // getKeyboard<>
             this.ret_client(out, "\"%s\"".formatted(GUI.BufferKeboard));
         }

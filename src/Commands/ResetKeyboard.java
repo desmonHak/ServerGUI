@@ -6,10 +6,7 @@ import src.GUI;
 import src.Pair;
 
 import javax.swing.*;
-import java.awt.*;
 import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.Objects;
 
 public class ResetKeyboard extends Command {
     /**
@@ -24,8 +21,9 @@ public class ResetKeyboard extends Command {
     }
 
     @Override
-    public Objects exec(PrintWriter out, Pair<Groups, Users> dataUser){
-        if (this.id.equalsIgnoreCase("resetKeyboard")) {
+    public String exec(PrintWriter out, Pair<Groups, Users> dataUser){
+        if (this.id.equalsIgnoreCase("resetKeyboard")
+                && does_he_have_permissions(dataUser, this.getClass())) {
             // getKeyboard<>
             GUI.BufferKeboard = ""; // variar el buffer
         }

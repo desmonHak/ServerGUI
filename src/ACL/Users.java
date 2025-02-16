@@ -101,7 +101,7 @@ public class Users implements Serializable {
     /*
      * calcula el hash de una posible password
      */
-    Users (
+    public Users(
             String name_user,
             String password,
             Groups group

@@ -99,7 +99,7 @@ public class Command {
     public Objects exec(){
         return null;
     }
-    public Objects exec(PrintWriter out, Pair<Groups, Users> dataUser){
+    public String exec(PrintWriter out, Pair<Groups, Users> dataUser){
         return null;
     }
 
@@ -107,7 +107,7 @@ public class Command {
      *
      * @return true si tiene permisos para ejecutar el comando y false si no
      */
-    public boolean does_he_have_permissions(Pair<Groups, Users> dataUser, Class<? extends DrawPixel>class_call) {
+    public boolean does_he_have_permissions(Pair<Groups, Users> dataUser, Class<? extends Command>class_call) {
         Groups group = dataUser.getFirst();
         Users  user  = dataUser.getSecond();
         Boolean data = user.commands_permission.get(class_call);

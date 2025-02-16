@@ -7,7 +7,6 @@ import src.Pair;
 
 import javax.swing.*;
 import java.io.PrintWriter;
-import java.util.Objects;
 
 
 public class SetTitle extends Command {
@@ -16,8 +15,9 @@ public class SetTitle extends Command {
     }
 
     @Override
-    public Objects exec(PrintWriter out, Pair<Groups, Users> dataUser){
-        if (this.id.equalsIgnoreCase("setTitle")) {
+    public String exec(PrintWriter out, Pair<Groups, Users> dataUser){
+        if (this.id.equalsIgnoreCase("setTitle")
+                && does_he_have_permissions(dataUser, this.getClass())) {
             // setTitle<"hola mundo">
 
             // clase de formateo de datos

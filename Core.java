@@ -1,7 +1,9 @@
+import src.ACL.Users;
 import src.GUI;
 import src.Server;
 
 import java.io.IOException;
+import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 
 /**
@@ -23,6 +25,10 @@ public class Core  {
             ClassNotFoundException,
             NoSuchAlgorithmException
     {
+
+        URL packageURL = Users.class.getClassLoader().getResource("src/Commands");
+        System.out.println("Buscando clases comando en: " + packageURL);
+
         Server server = new Server(450);
         GUI gui = new GUI();
         server.start();

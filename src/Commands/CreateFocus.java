@@ -1,7 +1,6 @@
 package src.Commands;
 
 import java.io.PrintWriter;
-import java.util.Objects;
 import javax.swing.*;
 
 import src.ACL.Groups;
@@ -15,8 +14,9 @@ public class CreateFocus extends Command {
     }
 
     @Override
-    public Objects exec(PrintWriter out, Pair<Groups, Users> dataUser) {
-        if (this.id.equalsIgnoreCase("createFocus")) {
+    public String exec(PrintWriter out, Pair<Groups, Users> dataUser) {
+        if (this.id.equalsIgnoreCase("createFocus")
+                && does_he_have_permissions(dataUser, this.getClass())) {
             // createFocus<"root.Foco1", 1, >
 
             // clase de formateo de datos

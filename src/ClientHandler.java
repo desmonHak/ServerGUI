@@ -231,7 +231,7 @@ public class ClientHandler implements Runnable {
      * @return La respuesta al cliente, que puede ser el resultado del comando o un mensaje de error.
      */
     private String processRequest(String request) {
-        Object data_client = null;
+        String data_client = null;
         if (request.isEmpty()) return "";
 
         Command command = new Command(request, this.windows);
@@ -260,7 +260,7 @@ public class ClientHandler implements Runnable {
 
                     // si el comando no devuelve null, quiere decir que se debe enviar los datos
                     //specificCommand.ret_client(out, (String) data_client);
-                    return (String) data_client;
+                    return data_client;
 
                 } catch (Exception e) {
                     return "return[%s]<Error executing command, %s>".formatted(command.id, e.getMessage());

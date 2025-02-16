@@ -1,7 +1,6 @@
 package src.Commands;
 
 import java.io.PrintWriter;
-import java.util.Objects;
 import javax.swing.*;
 
 import src.ACL.Groups;
@@ -33,11 +32,11 @@ public class AutoRefreshScreen extends Command {
 
     /**
      * Ejecuta el comando "autoUpdateScreen", que activa o desactiva la actualización automática de la pantalla.
-     *
+     * <p>
      * El formato del comando es "autoUpdateScreen&lt;true/false&gt;", donde:
      * - true: activa la actualización automática de la pantalla.
      * - false: desactiva la actualización automática de la pantalla.
-     *
+     * <p>
      * Ejemplo:
      * Si el comando recibido es:
      * <pre>
@@ -48,9 +47,10 @@ public class AutoRefreshScreen extends Command {
      * @return null
      */
     @Override
-    public Objects exec(PrintWriter out, Pair<Groups, Users> dataUser) {
+    public String exec(PrintWriter out, Pair<Groups, Users> dataUser) {
         if (
-                this.id.equalsIgnoreCase("autoUpdateScreen")) {
+                this.id.equalsIgnoreCase("autoUpdateScreen")
+        && does_he_have_permissions(dataUser, this.getClass())) {
             ParamFormatter param = new ParamFormatter(this.params);
             GUI.update_thread.setEstatus(param.asBoolean(0));
             this.ret_client(out); // retornar

@@ -1,7 +1,6 @@
 package src.Commands;
 
 import java.io.PrintWriter;
-import java.util.Objects;
 import javax.swing.*;
 
 import src.ACL.Groups;
@@ -15,8 +14,9 @@ public class GetAttribFocus extends Command {
     }
 
     @Override
-    public Objects exec(PrintWriter out, Pair<Groups, Users> dataUser){
-        if (this.id.equalsIgnoreCase("getAttribFocus")) {
+    public String exec(PrintWriter out, Pair<Groups, Users> dataUser){
+        if (this.id.equalsIgnoreCase("getAttribFocus")
+                && does_he_have_permissions(dataUser, this.getClass())) {
             // getAttribFocus<>
             this.ret_client(out, 
                 "\"%s\", %s".formatted(

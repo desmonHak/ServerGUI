@@ -14,7 +14,7 @@ public class SerializableObjects {
     public String name_file;
     public static String name_file_default = new SimpleDateFormat(
             "yyyy").format(new Date()) + ".dat";
-    public ArrayList<Groups> groups;
+    public static ArrayList<Groups> groups;
 
     public SerializableObjects(String name_file) {
         if (name_file == null) {

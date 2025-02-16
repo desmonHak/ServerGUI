@@ -2,14 +2,11 @@ package src.Commands;
 
 import src.ACL.Groups;
 import src.ACL.Users;
-import src.Focus.Focus;
-import src.GUI;
 import src.Pair;
 
 import javax.swing.*;
 import java.io.PrintWriter;
 import java.util.Map;
-import java.util.Objects;
 
 public class GetMyPermissions extends Command {
     public GetMyPermissions(String command, JFrame windows) {
@@ -17,8 +14,9 @@ public class GetMyPermissions extends Command {
     }
 
     @Override
-    public Objects exec(PrintWriter out, Pair<Groups, Users> dataUser) {
-        if (this.id.equalsIgnoreCase("getMyPermissions")) {
+    public String exec(PrintWriter out, Pair<Groups, Users> dataUser) {
+        if (this.id.equalsIgnoreCase("getMyPermissions")
+                && does_he_have_permissions(dataUser, this.getClass())) {
             // getMyPermissions<>
 
             Groups MyGroup = dataUser.getFirst();
