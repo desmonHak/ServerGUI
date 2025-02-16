@@ -1,6 +1,12 @@
 #include "csgui.h"
 
 int main(){
+    #ifdef _WIN32
+        #include <windows.h>
+        SetConsoleOutputCP(CP_UTF8);
+        SetConsoleCP(CP_UTF8);
+    #endif
+
     char buffer[BUFFER_SIZE];
     char input[BUFFER_SIZE];
     if (csgui(init_socket_t)()!= 0) {
