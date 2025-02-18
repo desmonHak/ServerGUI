@@ -154,6 +154,7 @@ public class GUI extends JPanel implements KeyListener {
 
         // Dibujar cada foco dentro del buffer
         for (Focus focus : Focus.stack_focus_root.values()) {
+
             focus.render(g2d, buffer);
         }
 

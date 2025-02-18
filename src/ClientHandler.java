@@ -263,6 +263,7 @@ public class ClientHandler implements Runnable {
                     return data_client;
 
                 } catch (Exception e) {
+                    e.printStackTrace();
                     return "return[%s]<Error executing command, %s>".formatted(command.id, e.getMessage());
                 }
             } else {

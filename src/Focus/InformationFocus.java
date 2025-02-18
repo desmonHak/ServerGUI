@@ -12,6 +12,8 @@ public class InformationFocus {
 
     // Buffer gráfico del foco
     public transient BufferedImage buffer;
+    // Copia del área de fondo antes de dibujar el foco
+    private transient BufferedImage backgroundBackup;
 
     public InformationFocus(int x, int y, int width, int height, Color color) {
         this.x = x;
@@ -37,12 +39,43 @@ public class InformationFocus {
         g.dispose();
     }
 
-    // Método para renderizar el buffer en el buffer global de GUI
+    /**
+     * Método para guardar el área del fondo antes de dibujar el foco.
+     * Se debe llamar antes de mover o redimensionar el foco.
+     */
+    public void backupBackground(BufferedImage guiBuffer) {
+        // Se crea una copia profunda del área del guiBuffer que corresponde al foco
+        backgroundBackup = new BufferedImage(width, height, guiBuffer.getType());
+        Graphics2D bgG = backgroundBackup.createGraphics();
+        bgG.drawImage(guiBuffer,
+                0, 0, width, height,
+                x, y, x + width, y + height,
+                null);
+        bgG.dispose();
+    }
+
+    /**
+     * Restaura el área del fondo que se había guardado.
+     */
+    public void restoreBackground(BufferedImage guiBuffer) {
+        if (backgroundBackup != null) {
+            Graphics2D g2d = guiBuffer.createGraphics();
+            g2d.drawImage(backgroundBackup, x, y, null);
+            g2d.dispose();
+        }
+    }
+
+    /**
+     * Renderiza el foco en el buffer global. Antes de dibujar, restaura el área
+     * donde estaba el foco (si se movió o redimensionó) para evitar que se acumule el dibujo.
+     */
     public void render(Graphics2D g, BufferedImage guiBuffer) {
-        // necesario eliminar g posiblemente
-        Graphics2D g2d = (Graphics2D) guiBuffer.getGraphics();
-        g2d.drawImage(buffer, x, y, null);
-        g2d.dispose();
+        // Primero restauramos el área antigua (si se ha guardado)
+        restoreBackground(guiBuffer);
+        // Luego, guardamos el área de fondo actual en la nueva posición
+        backupBackground(guiBuffer);
+        // Finalmente, dibujamos el foco en el guiBuffer en la posición (x,y)
+        g.drawImage(buffer, x, y, null);
     }
 
     @Override

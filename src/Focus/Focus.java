@@ -1,5 +1,7 @@
 package src.Focus;
 
+import src.GUI;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
@@ -22,7 +24,7 @@ public class Focus {
     // información sobre el foco
     public InformationFocus information;
 
-    static String getLastNameFocus(String[] string) {
+    public static String getLastNameFocus(String[] string) {
         return string[string.length - 1];
     }
 
@@ -92,48 +94,61 @@ public class Focus {
     }
     
     public Focus(int id_focus, String name_focus) {
-        this.id_focus = id_focus;
-        this.name_focus = name_focus;
-        this.stack_focus_local = new HashMap<>();
-        this.information = new InformationFocus(
-            0, 0, 50, 50, Color.BLUE);//GUI.dotDrawer.getBackground());
-
         // root.foco1.subfoco1
-        String[] arr_ids = this.name_focus.split("\\.");
-        HashMap<String, Focus> focus_instance = stack_focus_root;
-        Focus sub_focus = null;
-        for (String name : arr_ids) {
-            // si es la ventana padre
-            if (this.name_focus.equalsIgnoreCase("root")) {
-                /*if (arr_ids.length == 1) {
-                    stack_focus_root.put(this.name_focus, this);
-                }*/
-                /*si arr_ids no es 1(solo es la palabra root), entonces 
-                no agregar a la ventana padre y saltarse este id */ 
+        // Separar la ruta por puntos, por ejemplo: "root.a"
+        String[] arr_ids = name_focus.split("\\.");
+        // Reasignar name_focus al último token (por ejemplo, "a")
+        this.name_focus = arr_ids[arr_ids.length - 1];
+        this.id_focus = id_focus;
+        this.stack_focus_local = new HashMap<>();
+        this.information = new InformationFocus(0, 0, 50, 50, Color.BLUE);//GUI.dotDrawer.getBackground());
+
+        // El primer token debe ser "root"
+        if (!arr_ids[0].equalsIgnoreCase("root")) {
+            throw new IllegalArgumentException("El nombre del foco debe iniciar con 'root'");
+        }
+
+        // Obtener o crear el foco raíz en stack_focus_root
+        Focus root = stack_focus_root.get("root");
+        if (root == null) {
+            if (arr_ids.length == 1) {
+                this.information.width = GUI.frame.getWidth();
+                this.information.height = GUI.frame.getHeight();
+                stack_focus_root.put("root", this);
+                root = this;
             } else {
-                // obtener el subfoco por su nombre
-                sub_focus = focus_instance.get(name);   
-                if (sub_focus == null) {
-                    // si el subfoco no existe, crearlo
-                    focus_instance.put(name, new Focus(
-                        0, name, new HashMap<String, Focus>()));
-                    sub_focus = focus_instance.get(name);
-                }
-                // cambiar la variable para seguir iterando las rutas
-                focus_instance = sub_focus.stack_focus_local; 
+                root = new Focus(0, "root", new HashMap<String, Focus>());
+                root.information.width = GUI.frame.getWidth();
+                root.information.height = GUI.frame.getHeight();
+                root.information.color = Color.BLACK;
+                stack_focus_root.put("root", root);
             }
         }
 
-        /*if (arr_ids.length != 1) {
-            if (sub_focus != null) {
-                // obtener el nombre real del foco
-                this.name_focus = getLastNameFocus(arr_ids);
-                focus_instance.put(this.name_focus, this);
+// Navegar o crear la jerarquía para los subfocos
+        Focus parent = root;
+        for (int i = 1; i < arr_ids.length; i++) {
+            String token = arr_ids[i];
+            Focus child = parent.stack_focus_local.get(token);
+            if (child == null) {
+                if (i == arr_ids.length - 1) {
+                    // En el último token, se inserta el foco actual
+                    parent.stack_focus_local.put(token, this);
+                    parent = this; // El foco actual es el final de la cadena
+                } else {
+                    // Crear un subfoco intermedio
+                    child = new Focus(0, token, new HashMap<String, Focus>());
+                    parent.stack_focus_local.put(token, child);
+                    parent = child;
+                }
+            } else {
+                // Si ya existe, avanzar a ese nodo
+                parent = child;
             }
-        }*/
-        now_Focus = this; // indicar que el foco actual es el nuevo foco
-        print_HashMap(stack_focus_root, 0);
+        }
 
+        now_Focus = this; // Indicar que este es el foco actual
+        print_HashMap(stack_focus_root, 0);
     }
 
     @Override
