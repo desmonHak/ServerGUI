@@ -24,7 +24,7 @@ public class GetMyPermissions extends Command {
 
             String data_ret = "";
             for (Map.Entry<Class<? extends Command>, Boolean> entry : MyUser.commands_permission.entrySet()) {
-                data_ret += "\"%s\" : %s, ".formatted(entry.getKey().getName(), entry.getValue());
+                data_ret += "\"%s\" : %s, ".formatted(entry.getKey().getSimpleName(), entry.getValue());
             }
             this.ret_client(out, data_ret);
 

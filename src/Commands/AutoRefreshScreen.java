@@ -50,11 +50,11 @@ public class AutoRefreshScreen extends Command {
     public String exec(PrintWriter out, Pair<Groups, Users> dataUser) {
         if (
                 this.id.equalsIgnoreCase("autoUpdateScreen")
-        && does_he_have_permissions(dataUser, this.getClass())) {
+                && does_he_have_permissions(dataUser, this.getClass())) {
             ParamFormatter param = new ParamFormatter(this.params);
             GUI.update_thread.setEstatus(param.asBoolean(0));
-            this.ret_client(out); // retornar
         }
+        this.ret_client(out); // retornar
         return null;
     }
 }

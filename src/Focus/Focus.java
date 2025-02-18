@@ -46,7 +46,7 @@ public class Focus {
      * root = ruta con el nombre del foco hijo
      *
      */
-    private static Focus get_FocusFather(
+    public static Focus get_FocusFather(
         HashMap<String, Focus> map, String[] arr_ids
         ) {
         // obtener el nombre del ultimo Foco

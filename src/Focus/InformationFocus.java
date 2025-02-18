@@ -11,7 +11,7 @@ public class InformationFocus {
     public Color color;
 
     // Buffer gráfico del foco
-    protected transient BufferedImage buffer;
+    public transient BufferedImage buffer;
 
     public InformationFocus(int x, int y, int width, int height, Color color) {
         this.x = x;
@@ -29,6 +29,8 @@ public class InformationFocus {
     }
     // Método para pintar dentro del buffer del foco
     public void paint() { // pintar dentro del buffer local del foco
+        // tal vez, no sea necesario
+        buffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB); // Asegurar el tamaño correcto
         Graphics2D g = buffer.createGraphics();
         g.setColor(color);
         g.fillRect(0, 0, width, height); // Dibujar el área del foco
@@ -37,6 +39,7 @@ public class InformationFocus {
 
     // Método para renderizar el buffer en el buffer global de GUI
     public void render(Graphics2D g, BufferedImage guiBuffer) {
+        // necesario eliminar g posiblemente
         Graphics2D g2d = (Graphics2D) guiBuffer.getGraphics();
         g2d.drawImage(buffer, x, y, null);
         g2d.dispose();
