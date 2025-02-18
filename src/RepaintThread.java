@@ -61,7 +61,7 @@ public class RepaintThread  implements Runnable {
                     System.out.println("dotDrawer aun no fue instanciada");
                 }
                 try {
-                    Thread.sleep(16); // 60 FPS aproximadamente
+                    Thread.sleep(1000 / 60); // 60 FPS aproximadamente
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

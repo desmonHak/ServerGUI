@@ -1,8 +1,7 @@
 package src;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import javax.swing.*;
 import src.Focus.Focus;
@@ -13,7 +12,9 @@ import src.Focus.Focus;
  * pantalla, así como de la visualización del contenido gráfico mediante un
  * buffer de imagen.
  */
-public class GUI extends JPanel implements KeyListener {
+public class GUI
+        extends JPanel
+        implements KeyListener, MouseListener, MouseMotionListener {
 
     /** Dimensiones de la pantalla del dispositivo */
     private static final Dimension TAMANO_PANTALLA = Toolkit.getDefaultToolkit().getScreenSize();
@@ -37,6 +38,15 @@ public class GUI extends JPanel implements KeyListener {
     public static RepaintThread update_thread;
 
     public static String BufferKeboard; // String donde almacenar todas las teclas pulsadas
+
+    // velocidad de seguimiento del raton
+    public float interpolationFactor = 0.9f;
+    public final int radio = 4; // radio para el raton
+    /* Posiciones del cursor del raton: */
+    public Point targetPosition = new Point(0, 0);
+    public Point currentPosition = new Point(0, 0);
+    public boolean isMousePressed = false;
+    public static Color colorMouse = new Color(255, 0,0, 64); // color del clic
 
     /**
      * Constructor de la clase `GUI`. Inicializa la ventana y el buffer de imagen.
@@ -79,6 +89,10 @@ public class GUI extends JPanel implements KeyListener {
 
         frame.setPreferredSize(new Dimension(scaledWidth, scaledHeight));
         frame.pack(); // no usar setSize, no funciona
+
+        /* Añadir el raton */
+        this.addMouseListener(this);
+        this.addMouseMotionListener(this);
 
         /* Añadir teclado: */
         this.addKeyListener(this);
@@ -154,8 +168,21 @@ public class GUI extends JPanel implements KeyListener {
 
         // Dibujar cada foco dentro del buffer
         for (Focus focus : Focus.stack_focus_root.values()) {
-
             focus.render(g2d, buffer);
+        }
+
+        // Interpolar la posición del círculo
+        if (isMousePressed) {
+            // Interpolar la posición del círculo
+            float dx = targetPosition.x - currentPosition.x;
+            float dy = targetPosition.y - currentPosition.y;
+            currentPosition.x += dx * interpolationFactor;
+            currentPosition.y += dy * interpolationFactor;
+
+            // Dibujar el círculo interpolado
+            g2d.setColor(colorMouse);
+            g2d.fillOval((int)currentPosition.x - radio,
+                    (int)currentPosition.y - radio, 2*radio, 2*radio);
         }
 
         g2d.dispose();
@@ -179,11 +206,53 @@ public class GUI extends JPanel implements KeyListener {
         //System.out.println("2 " + e.getKeyChar());
     }
 
+
     /*
      * si la tecla es presionada y luego se libera, al iberarla, se ejecuta la funcion
      */
     @Override
     public void keyReleased(KeyEvent e) {
         //System.out.println("3 " + e.getKeyChar());
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+    /* Cuando se pulsa el botón izquierdo del ratón se llama a mousePressed */
+    @Override
+    public void mousePressed(MouseEvent ev) {
+        // lógica que cuando se presiona el botón del ratón
+        isMousePressed = true;
+        targetPosition.setLocation(ev.getPoint());
+    }
+
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        isMousePressed = false;
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+
+    /* Metodos de MouseMotionListener */
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        targetPosition.setLocation(e.getPoint());
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        if (isMousePressed) {
+            targetPosition.setLocation(e.getPoint());
+        }
     }
 }
