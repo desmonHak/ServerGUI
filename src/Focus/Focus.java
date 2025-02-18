@@ -79,7 +79,7 @@ public class Focus {
         this.name_focus = name_focus;
         this.stack_focus_local = stack_focus_local;
         this.information = new InformationFocus(
-            0, 0, 50, 50, Color.BLUE);//GUI.dotDrawer.getBackground());
+            0, 0, 1, 1, Color.BLUE);//GUI.dotDrawer.getBackground());
     }
     public void render(Graphics2D g, BufferedImage guiBuffer) {
         if (information != null) {
@@ -101,7 +101,7 @@ public class Focus {
         this.name_focus = arr_ids[arr_ids.length - 1];
         this.id_focus = id_focus;
         this.stack_focus_local = new HashMap<>();
-        this.information = new InformationFocus(0, 0, 50, 50, Color.BLUE);//GUI.dotDrawer.getBackground());
+        this.information = new InformationFocus(0, 0, 1, 1, Color.BLUE);//GUI.dotDrawer.getBackground());
 
         // El primer token debe ser "root"
         if (!arr_ids[0].equalsIgnoreCase("root")) {
@@ -125,7 +125,7 @@ public class Focus {
             }
         }
 
-// Navegar o crear la jerarquía para los subfocos
+        // Navegar o crear la jerarquía para los subfocos
         Focus parent = root;
         for (int i = 1; i < arr_ids.length; i++) {
             String token = arr_ids[i];

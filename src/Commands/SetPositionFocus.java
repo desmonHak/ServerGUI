@@ -43,6 +43,9 @@ public class SetPositionFocus extends Command{
                     } else {
                         String[] name = name_focus.split("\\.");
                         f = get_FocusFather(stack_focus_root, name);
+                        if (f == null) {
+                            break first;
+                        }
                         f = f.stack_focus_local.get(Focus.getLastNameFocus(name));
                     }
                     // si el foco no existe. retornar false
@@ -56,7 +59,7 @@ public class SetPositionFocus extends Command{
                     f.information.y = y;
                     f.information.paint();
                     Focus.now_Focus = f;
-                    
+
                     this.ret_client(out, "%s".formatted(true));
                     return null;
                 }

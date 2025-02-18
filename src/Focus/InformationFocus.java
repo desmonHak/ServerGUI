@@ -18,8 +18,8 @@ public class InformationFocus {
     public InformationFocus(int x, int y, int width, int height, Color color) {
         this.x = x;
         this.y = y;
-        this.height = 10;
-        this.width = 10;
+        this.height = 1;
+        this.width = 1;
         this.color = color;
         buffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         paint(); // pintar
@@ -34,10 +34,20 @@ public class InformationFocus {
         // tal vez, no sea necesario
         buffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB); // Asegurar el tamaño correcto
         Graphics2D g = buffer.createGraphics();
-        g.setColor(color);
-        g.fillRect(0, 0, width, height); // Dibujar el área del foco
+        g.setComposite(AlphaComposite.Clear);
+        g.fillRect(0, 0, width, height);
+        g.setComposite(AlphaComposite.SrcOver);
+        g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()));
+        g.fillRect(0, 0, width, height);
         g.dispose();
     }
+
+    public void drawTransparentPixel(int x, int y, Color color) {
+        if (x >= 0 && x < width && y >= 0 && y < height) {
+            buffer.setRGB(x, y, color.getRGB());
+        }
+    }
+
 
     /**
      * Método para guardar el área del fondo antes de dibujar el foco.
@@ -70,12 +80,15 @@ public class InformationFocus {
      * donde estaba el foco (si se movió o redimensionó) para evitar que se acumule el dibujo.
      */
     public void render(Graphics2D g, BufferedImage guiBuffer) {
-        // Primero restauramos el área antigua (si se ha guardado)
-        restoreBackground(guiBuffer);
-        // Luego, guardamos el área de fondo actual en la nueva posición
-        backupBackground(guiBuffer);
+        restoreBackground(guiBuffer); // Primero restauramos el área antigua (si se ha guardado)
+        backupBackground(guiBuffer); // Luego, guardamos el área de fondo actual en la nueva posición
+
+        Composite originalComposite = g.getComposite();
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, color.getAlpha() / 255f));
+
         // Finalmente, dibujamos el foco en el guiBuffer en la posición (x,y)
         g.drawImage(buffer, x, y, null);
+        g.setComposite(originalComposite);
     }
 
     @Override
