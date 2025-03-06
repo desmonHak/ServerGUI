@@ -42,16 +42,16 @@ int Csgui::connect_to_server() {
 
 int Csgui::connect_to_server(std::string user, std::string password) {
     // realizar la conexion para despues realizar la autenticación
-    int ret = connect_to_server();
+    int ret = this->connect_to_server();
 
     // Implementar autenticación
-    send_data("root\n"); // usuario
-    send_data("1234\n"); // password
+    this->send_data("root\n"); // usuario
+    this->send_data("1234\n"); // password
     return ret;
 }
 
 int Csgui::connect_to_server(const char *user, const char *password) {
-    return connect_to_server(std::string(user), std::string(password));
+    return this->connect_to_server(std::string(user), std::string(password));
 }
 
 bool Csgui::is_error_connect(int status_connect) {

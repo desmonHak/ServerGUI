@@ -39,6 +39,10 @@ int main(){
     printf("Conectado al servidor %s:%d\n", SERVER_IP, SERVER_PORT);
     printf("Escribe 'exit' para cerrar la conexión.\n");
 
+    // autenticacion
+    send(sockfd, "root\n", sizeof("root\n"), 0);
+    send(sockfd, "1234\n", sizeof("1234\n"), 0);
+
     // Bucle interactivo
     while (1) {
     // Limpiar buffers
