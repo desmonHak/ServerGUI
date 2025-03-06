@@ -18,6 +18,8 @@ class Csgui {
         Csgui(int port, std::string ip);
         //~Csgui();
         int connect_to_server();
+        int connect_to_server(std::string user, std::string password);
+        int connect_to_server(const char *user, const char *password);
         bool is_error_connect(int status_connect);
         int close();
         int send_data(const char* data, int size);

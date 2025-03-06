@@ -40,6 +40,20 @@ int Csgui::connect_to_server() {
     return connect(client, (struct sockaddr*)&server_addr, sizeof(server_addr));
 }
 
+int Csgui::connect_to_server(std::string user, std::string password) {
+    // realizar la conexion para despues realizar la autenticación
+    int ret = connect_to_server();
+
+    // Implementar autenticación
+    send_data("root\n"); // usuario
+    send_data("1234\n"); // password
+    return ret;
+}
+
+int Csgui::connect_to_server(const char *user, const char *password) {
+    return connect_to_server(std::string(user), std::string(password));
+}
+
 bool Csgui::is_error_connect(int status_connect) {
     /*
     Permite comprobar si Csgui::connect_to_server tuvo exito
@@ -69,7 +83,7 @@ int Csgui::drawPixel(uint64_t x, uint64_t y, rgb color){
 
 std::string Csgui::recv_data(int size){
     std::string response(size, 0);
-    recv(client, response.data(), size, 0);
+    recv(client, &response[0], size, 0);
     return response;
 }
 
