@@ -52,6 +52,16 @@ typedef struct sockaddr_in sockaddr_in_t;
 
 #define csgui(name) csgui_ ## name
 
+// para argumentos de entrada
+#ifndef ARG_IN
+#define ARG_IN
+#endif
+
+// para argumentos de salida
+#ifndef ARG_OUT
+#define ARG_OUT
+#endif
+
 typedef struct {
     uint8_t r;
     uint8_t g;
@@ -59,12 +69,74 @@ typedef struct {
 } rgb;
 
 static inline int csgui(init_socket_t)();
-static inline socket_t csgui(create_socket_t)(int af, int type, int protocol);
-inline int csgui(setsockopt_t)(socket_t self, int level, int optname, const char *optval, int optlen);
-inline int csgui(close_t)(socket_t self);
-inline int csgui(bind_t)(sockaddr_in_t *addr, short family, unsigned short port, const char *ip_address);
+static inline socket_t csgui(create_socket_t)(
+    int ARG_IN af, 
+    int ARG_IN type, 
+    int ARG_IN protocol
+);
+inline int csgui(setsockopt_t)(
+    socket_t ARG_IN self, 
+    int ARG_IN level, 
+    int ARG_IN optname, 
+    const char * ARG_IN optval, 
+    int ARG_IN optlen
+);
+inline int csgui(close_t)(socket_t ARG_IN self);
+inline int csgui(bind_t)(
+    sockaddr_in_t * ARG_IN addr, 
+    short ARG_IN family, 
+    unsigned short ARG_IN port, 
+    const char * ARG_IN ip_address
+);
 
-int csgui(drawPixel)(socket_t client, int x, int y, rgb color);
+int csgui(drawPixel)(
+    socket_t ARG_IN client, 
+    int ARG_IN x, 
+    int ARG_IN y,
+    rgb ARG_IN color
+);
+
+int csgui(autoUpdateScreen)(
+    socket_t ARG_IN client, 
+    bool ARG_IN status
+);
+
+int csgui(createFocus)(
+    socket_t ARG_IN client, 
+    const char* ARG_IN name_focus, 
+    size_t ARG_IN id_focus
+);
+
+int csgui(createNewUser)(
+    socket_t ARG_IN client, 
+    const char* ARG_IN group, 
+    const char* ARG_IN user,
+    const char* ARG_IN password
+);
+
+int csgui(deleteFocus)(
+    socket_t ARG_IN client, 
+    const char* ARG_IN name_focus
+);
+
+int csgui(getAttribFocus)(
+    socket_t ARG_IN client, 
+    const char* ARG_IN name_focus,
+    char* ARG_OUT output_AttribFocus_data, 
+    size_t ARG_IN size_output_AttribFocus_data
+);
+
+int csgui(getAttribFocusNow)(socket_t ARG_IN client, 
+    const char* ARG_IN name_focus,
+    char* ARG_OUT output_AttribFocus_data, 
+    size_t ARG_IN size_output_AttribFocus_data
+);
+
+int csgui(getKeyboard)(
+    socket_t ARG_IN client, 
+    char* ARG_OUT output_keyboard_data, 
+    size_t ARG_IN size_output_keyboard_data
+);
 
 #include "command.h"
 
