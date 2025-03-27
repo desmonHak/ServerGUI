@@ -53,8 +53,8 @@ public class Server {
             int port,
             String name_file
     ) throws IOException, ClassNotFoundException {
-        SerializableObjects user_groups = new SerializableObjects(null);
-        user_groups.load_users_and_groups();
+        ACL = new SerializableObjects(name_file);
+        ACL.load_users_and_groups();
 
         this.port = port;
     }

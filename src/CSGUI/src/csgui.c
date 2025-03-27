@@ -208,6 +208,31 @@ int csgui(getKeyboard)(
     ) & status;
 }
 
+int csgui(getMyPermissions)(
+    socket_t ARG_IN client, 
+    char* ARG_OUT output_getMyPermissions_data, 
+    size_t ARG_IN size_output_getMyPermissions_data
+) {
+    char command[LOCAL_STING_LENGTH];
+
+    // Crear el comando 
+    // getMyPermissions<>
+    snprintf(command, LOCAL_STING_LENGTH,
+        build_command(
+            getMyPermissions) "\r\n" // Agregar delimitador de línea al mensaje
+    );
+
+    int status = send(client, command, strlen(command), 0);
+    
+    // unir estados
+    return recv(
+        client, 
+        output_getMyPermissions_data, 
+        size_output_getMyPermissions_data, 0
+    ) & status;
+}
+
+
 #endif // LINKER_MODO_ON
 
 #endif
