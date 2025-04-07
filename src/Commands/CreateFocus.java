@@ -6,11 +6,12 @@ import javax.swing.*;
 import src.ACL.Groups;
 import src.ACL.Users;
 import src.Focus.*;
+import src.GUI;
 import src.Pair;
 
 public class CreateFocus extends Command {
-    public CreateFocus(String command, JFrame windows) {
-        super(command, windows);
+    public CreateFocus(String command, GUI gui) {
+        super(command, gui);
     }
 
     @Override
@@ -27,7 +28,7 @@ public class CreateFocus extends Command {
 
             int id_focus = title.asInt(1);
 
-            Focus f = new Focus(id_focus, name_focus);
+            Focus f = new Focus(gui, id_focus, name_focus);
 
 
         }

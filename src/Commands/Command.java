@@ -1,16 +1,15 @@
 package src.Commands;
 
-import src.ACL.Groups;
-import src.ACL.Users;
-import src.Pair;
-
-import javax.swing.*;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import src.ACL.Groups;
+import src.ACL.Users;
+import src.GUI;
+import src.Pair;
 
 /**
  * Representa un comando recibido desde el cliente para ser procesado y ejecutado.
@@ -29,16 +28,16 @@ public class Command {
     public List<String> params;
 
     /** Ventana de la interfaz gráfica */
-    JFrame     windows;
+    public GUI     gui;
 
     /**
      * Constructor que inicializa un comando a partir de una cadena recibida.
      * Analiza la cadena para extraer el identificador del comando y sus parámetros.
      *
      * @param command La cadena que representa el comando completo.
-     * @param windows La ventana de la interfaz gráfica donde se ejecutará el comando.
+     * @param gui La ventana de la interfaz gráfica donde se ejecutará el comando.
      */
-    public Command(String command, JFrame windows) {
+    public Command(String command, GUI gui) {
         this.command = command;
 
         String[] commands = this.command.split(":\\s*");
@@ -51,7 +50,7 @@ public class Command {
                 params = getCompositeParameters(matcher.group(2));
             }
         }
-        this.windows = windows;
+        this.gui = gui;
     }
 
     /**

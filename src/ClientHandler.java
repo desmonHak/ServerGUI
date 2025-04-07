@@ -50,10 +50,13 @@ public class ClientHandler implements Runnable {
     /** Mapa que asocia los identificadores de comandos con sus clases correspondientes */
     private HashMap<String, Class<? extends Command>> commandMap = new HashMap<>();
 
+    /** Lista de acceso con ususarios y grupos con sus respectivos permisos */
     private SerializableObjects ACL;
 
     // usuario y grupo del cliente actual, si su session es valida, se tiene el grupo y usuario:
     Pair<Groups, Users> data_user;
+
+    public GUI gui;
 
     /**
      * Constructor de la clase `ClientHandler`.
@@ -64,12 +67,14 @@ public class ClientHandler implements Runnable {
     public ClientHandler(
             Socket socket,
             int counter_null_msj_max,
-            SerializableObjects ACL
+            SerializableObjects ACL,
+            GUI gui
     ) throws ClassNotFoundException {
         this.clientSocket           = socket;
         this.counter_null_msj_max   = counter_null_msj_max;
         this.commandMap             = initializeCommandMap();
         this.ACL                    = ACL;
+        this.gui = gui;
     }
 
     /**
@@ -79,10 +84,12 @@ public class ClientHandler implements Runnable {
      */
     public ClientHandler(
             Socket socket,
-            SerializableObjects ACL
+            SerializableObjects ACL,
+            GUI gui
     ) throws ClassNotFoundException {
         this.clientSocket           = socket;
-        this.windows                = GUI.frame;
+        this.gui = gui;
+        this.windows                = this.gui.frame;
         this.commandMap             = initializeCommandMap();
         this.ACL                    = ACL;
     }
@@ -106,8 +113,9 @@ public class ClientHandler implements Runnable {
         map.put("getNowFocus",      GetNowFocus.class);
         map.put("getAttribFocus",   GetAttribFocus.class);*/
 
-        getClassesInPackage("src.Commands", CLASS_EXCLUIR);
+
         try {
+            // obtener un set con todas clases de la carpeta comandos, ignorando las clases indicadas en CLASS_EXCLUIR :
             Set<Class<?>> commandClasses = getClassesInPackage("src.Commands", CLASS_EXCLUIR);
             for (Class<?> clazz : commandClasses) {
                 // Verificar que la clase es una subclase de Command antes de agregarla al HashMap
@@ -142,7 +150,7 @@ public class ClientHandler implements Runnable {
     }
 
     /**
-     * Método principal que maneja la comunicación con el cliente.
+     * Metodo principal que maneja la comunicación con el cliente.
      * Lee los mensajes del cliente, los procesa y responde con el resultado o un error.
      */
     @Override
@@ -152,13 +160,13 @@ public class ClientHandler implements Runnable {
             out = new PrintWriter(clientSocket.getOutputStream(), true);
 
             // mientras el cliente no diga que la conexion finalizo, seguir con ella
-            boolean leave = true;
+            boolean life = true;
 
             out.println("username: ");
             String username = read_line(in).toString().trim();
             data_user = Groups.searchUserNameInGroup(ACL.groups, username);
             if (data_user == null) {
-                leave = false;
+                life = false;
                 out.println("el usuario no existe");
             } else {
                 out.println("<%s>password: ".formatted(username));
@@ -169,7 +177,7 @@ public class ClientHandler implements Runnable {
                     // verificar si las credenciales son correctas:
                     Users credentials = new Users(username, password, user.hash_pass, user.group);
                 } catch (PasswordError e) {
-                    leave = false;
+                    life = false;
                     System.out.println("Usuario %s del group %s con hash %s intento acceder con las credenciales %s".
                             formatted(
                                 username, data_user.getFirst().name, user.hash_pass, password
@@ -178,7 +186,7 @@ public class ClientHandler implements Runnable {
             }
 
 
-            while(leave) {
+            while(life) {
                 StringBuilder request = read_line(in);
 
                 // si no se envio informacion, aumentar el contador de mensajes nulos
@@ -194,11 +202,11 @@ public class ClientHandler implements Runnable {
                 if (response != null) { // si se obtuvo una respuesta a enviar
                     out.println(response);
                     if (response.equalsIgnoreCase("exit")){
-                        leave = false;
+                        life = false;
                     }
                 }
                 if (counter_null_msj == this.counter_null_msj_max) {
-                    leave = false;
+                    life = false;
                     continue;
                 }
 
@@ -234,7 +242,7 @@ public class ClientHandler implements Runnable {
         String data_client = null;
         if (request.isEmpty()) return "";
 
-        Command command = new Command(request, this.windows);
+        Command command = new Command(request, this.gui);
         System.out.println(request);
 
         if (command.id != null) {
@@ -253,8 +261,8 @@ public class ClientHandler implements Runnable {
                      *      String.class: La solicitud completa (request)
                      *      JFrame.class: El objeto windows (la referencia a la ventana gráfica, en este caso).
                      */
-                    Command specificCommand = commandClass.getDeclaredConstructor(String.class, JFrame.class)
-                            .newInstance(request, this.windows);
+                    Command specificCommand = commandClass.getDeclaredConstructor(String.class, GUI.class)
+                            .newInstance(request, this.gui);
                     // llamar al metodo exec del objeto:
                     data_client = specificCommand.exec(out, data_user);
 

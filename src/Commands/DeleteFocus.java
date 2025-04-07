@@ -6,11 +6,12 @@ import javax.swing.*;
 import src.ACL.Groups;
 import src.ACL.Users;
 import src.Focus.*;
+import src.GUI;
 import src.Pair;
 
 public class DeleteFocus extends Command {
-    public DeleteFocus(String command, JFrame windows) {
-        super(command, windows);
+    public DeleteFocus(String command, GUI gui) {
+        super(command, gui);
     }
 
     @Override

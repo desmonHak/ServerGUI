@@ -1,16 +1,15 @@
 package src.Commands;
 
-import src.ACL.Groups;
-import src.ACL.Users;
-import src.Pair;
-
-import javax.swing.*;
 import java.io.PrintWriter;
 import java.util.Map;
+import src.ACL.Groups;
+import src.ACL.Users;
+import src.GUI;
+import src.Pair;
 
 public class GetMyPermissions extends Command {
-    public GetMyPermissions(String command, JFrame windows) {
-        super(command, windows);
+    public GetMyPermissions(String command, GUI gui) {
+        super(command, gui);
     }
 
     @Override

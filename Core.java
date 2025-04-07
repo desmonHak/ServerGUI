@@ -1,10 +1,8 @@
-import src.ACL.Users;
-import src.GUI;
-import src.Server;
-
 import java.io.IOException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
+import src.ACL.Users;
+import src.Server;
 
 /**
  * Clase principal que inicializa el servidor y la interfaz gráfica del emulador.
@@ -13,7 +11,7 @@ import java.security.NoSuchAlgorithmException;
  */
 public class Core  {
     /**
-     * Método principal que se ejecuta al iniciar la aplicación.
+     * Metodo principal que se ejecuta al iniciar la aplicación.
      * Crea una instancia del servidor y la interfaz gráfica, y luego inicia el servidor
      * en el puerto 450.
      *
@@ -30,7 +28,7 @@ public class Core  {
         System.out.println("Buscando clases comando en: " + packageURL);
 
         Server server = new Server(450);
-        GUI gui = new GUI();
+
         server.start();
     }
 }

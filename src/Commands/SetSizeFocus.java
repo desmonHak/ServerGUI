@@ -3,6 +3,7 @@ package src.Commands;
 import src.ACL.Groups;
 import src.ACL.Users;
 import src.Focus.Focus;
+import src.GUI;
 import src.Pair;
 
 import javax.swing.*;
@@ -10,11 +11,10 @@ import java.awt.image.BufferedImage;
 import java.io.PrintWriter;
 
 import static src.Focus.Focus.get_FocusFather;
-import static src.Focus.Focus.stack_focus_root;
 
 public class SetSizeFocus extends Command{
-    public SetSizeFocus(String command, JFrame windows) {
-        super(command, windows);
+    public SetSizeFocus(String command, GUI gui) {
+        super(command, gui);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class SetSizeFocus extends Command{
                     name_focus = f.name_focus;
                 } else {
                     String[] name = name_focus.split("\\.");
-                    f = get_FocusFather(stack_focus_root, name);
+                    f = get_FocusFather(Focus.stack_focus_root, name);
                     f = f.stack_focus_local.get(Focus.getLastNameFocus(name));
                 }
                 // si el foco no existe. retornar false

@@ -3,14 +3,14 @@ package src.Commands;
 import src.ACL.Groups;
 import src.ACL.Users;
 import src.Focus.Focus;
+import src.GUI;
 import src.Pair;
 
-import javax.swing.*;
 import java.io.PrintWriter;
 
 public class GetNowFocus extends Command {
-    public GetNowFocus(String command, JFrame windows) {
-        super(command, windows);
+    public GetNowFocus(String command, GUI gui) {
+        super(command, gui);
     }
 
     @Override

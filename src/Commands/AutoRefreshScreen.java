@@ -24,10 +24,10 @@ public class AutoRefreshScreen extends Command {
      * Constructor de la clase {@link AutoRefreshScreen}.
      *
      * @param command El comando como una cadena de texto que se procesa para extraer los parámetros.
-     * @param windows La ventana principal (JFrame) para realizar la actualización gráfica.
+     * @param gui La ventana principal para realizar la actualización gráfica.
      */
-    public AutoRefreshScreen(String command, JFrame windows) {
-        super(command, windows);
+    public AutoRefreshScreen(String command, GUI gui) {
+        super(command, gui);
     }
 
     /**
@@ -52,7 +52,7 @@ public class AutoRefreshScreen extends Command {
                 this.id.equalsIgnoreCase("autoUpdateScreen")
                 && does_he_have_permissions(dataUser, this.getClass())) {
             ParamFormatter param = new ParamFormatter(this.params);
-            GUI.update_thread.setEstatus(param.asBoolean(0));
+            gui.update_thread.setEstatus(param.asBoolean(0));
         }
         this.ret_client(out); // retornar
         return null;

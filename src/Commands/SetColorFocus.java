@@ -11,11 +11,10 @@ import java.awt.*;
 import java.io.PrintWriter;
 
 import static src.Focus.Focus.get_FocusFather;
-import static src.Focus.Focus.stack_focus_root;
 
 public class SetColorFocus extends Command {
-    public SetColorFocus(String command, JFrame windows) {
-        super(command, windows);
+    public SetColorFocus(String command, GUI gui) {
+        super(command, gui);
     }
 
     @Override
@@ -25,7 +24,7 @@ public class SetColorFocus extends Command {
             first:
             {
 
-                // setColorFocus<"root.Juan.a.2", (255, 0, 0, 128)) // Rojo semi-transparente
+                // setColorFocus<"root.Juan.a.2", (255, 0, 0, 128))> // Rojo semi-transparente
 
                 // clase de formateo de datos
                 ParamFormatter param = new ParamFormatter(this.params);
@@ -52,7 +51,7 @@ public class SetColorFocus extends Command {
                     name_focus = f.name_focus;
                 } else {
                     String[] name = name_focus.split("\\.");
-                    f = get_FocusFather(stack_focus_root, name);
+                    f = get_FocusFather(Focus.stack_focus_root, name);
                     if (f == null) {
                         break first;
                     }

@@ -24,11 +24,11 @@ public class DrawPixel extends Command {
     /**
      * Constructor de la clase {@link DrawPixel}.
      *
-     * @param comamand El comando como una cadena de texto que se procesa para extraer los parámetros.
-     * @param windows La ventana principal (JFrame) para realizar la actualización gráfica.
+     * @param command El comando como una cadena de texto que se procesa para extraer los parámetros.
+     * @param gui La ventana principal para realizar la actualización gráfica.
      */
-    public DrawPixel(String comamand, JFrame windows) {
-        super(comamand, windows);
+    public DrawPixel(String command, GUI gui) {
+        super(command, gui);
     }
 
     /**
@@ -64,10 +64,10 @@ public class DrawPixel extends Command {
             // formatear el valor compuesto:
             param = new ParamFormatter(param.asList(2));
             System.out.println(param.asInt(0)+param.asInt(1)+ param.asInt(2));
-            GUI.dotDrawer.drawPixel(new Color(
+            gui.drawPixel(new Color(
                    param.asInt(0), param.asInt(1), param.asInt(2)
             ), x, y);
-            GUI.dotDrawer.repaint_all();
+            gui.repaint_all();
 
         }
         this.ret_client(out); // retornar

@@ -8,14 +8,14 @@ import javax.swing.*;
 import src.ACL.Groups;
 import src.ACL.Users;
 import src.Focus.Focus;
+import src.GUI;
 import src.Pair;
 
 import static src.Focus.Focus.get_FocusFather;
-import static src.Focus.Focus.stack_focus_root;
 
 public class GetAttribFocus extends Command {
-    public GetAttribFocus(String command, JFrame windows) {
-        super(command, windows);
+    public GetAttribFocus(String command, GUI gui) {
+        super(command, gui);
     }
 
     @Override
@@ -33,8 +33,8 @@ public class GetAttribFocus extends Command {
                 if (this.params.isEmpty()) {
                     this.ret_client(out,
                             "\"%s\", %s".formatted(
-                                    Focus.now_Focus,
-                                    Focus.now_Focus.information
+                                Focus.now_Focus,
+                                Focus.now_Focus.information
                             )
                     );
                 } else {
@@ -50,7 +50,7 @@ public class GetAttribFocus extends Command {
                         name_focus = f.name_focus;
                     } else {
                         String[] name = name_focus.split("\\.");
-                        f = get_FocusFather(stack_focus_root, name);
+                        f = get_FocusFather(Focus.stack_focus_root, name);
                         if (f == null) {
                             break first;
                         }

@@ -15,14 +15,17 @@ public class RepaintThread  implements Runnable {
      */
     private boolean estatus; // indica si actualiza o no la pantalla
 
+    private GUI gui;
+
     /**
      * Constructor de la clase `RepaintThread`.
      *
      * @param estatus Estado inicial de la variable `estatus`. Si es `true`,
      *                el hilo comenzará a repintar la pantalla a intervalos regulares.
      */
-    RepaintThread(boolean estatus) {
+    RepaintThread(boolean estatus, GUI gui) {
         this.estatus = estatus;
+        this.gui = gui;
     }
 
     /**
@@ -56,9 +59,9 @@ public class RepaintThread  implements Runnable {
         while (true) {
             if (estatus) {
                 try {
-                    GUI.dotDrawer.repaint_all(); // Llama al repintado genera
+                    gui.repaint_all(); // Llama al repintado genera
                 } catch (NullPointerException e) {
-                    System.out.println("dotDrawer aun no fue instanciada");
+                    System.out.println("gui aun no fue instanciada");
                 }
                 try {
                     Thread.sleep(1000 / 60); // 60 FPS aproximadamente

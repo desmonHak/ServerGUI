@@ -1,19 +1,13 @@
 package src;
 
-import java.awt.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 import src.ACL.SerializableObjects;
-import src.ClientHandler;
-import javax.swing.*;
-
-import static src.GUI.frame;
 
 
 /**
@@ -24,10 +18,19 @@ import static src.GUI.frame;
  */
 public class Server {
     private int port;
+
+    // socket del servidor
     private ServerSocket serverSocket;
+
+    // manejador del cliente actual:
     ClientHandler clientHandler;
+
+    // pila de hilos, cada cliente conectado tendra su propio hilo:
     private ConcurrentHashMap<Thread, ClientHandler> stack_threads = new ConcurrentHashMap<>();
+
+    // ACL = Acess Control List (lista de control de acceso)
     public SerializableObjects ACL;
+    public GUI gui;
     /**
      * Instanciar un servidor
      *
@@ -42,6 +45,7 @@ public class Server {
         }
 
         this.port = port;
+        this.gui = new GUI();
     }
 
     /**
@@ -57,6 +61,7 @@ public class Server {
         ACL.load_users_and_groups();
 
         this.port = port;
+        this.gui = new GUI();
     }
 
     /**
@@ -84,7 +89,7 @@ public class Server {
                 try {
                     Socket client = serverSocket.accept();
                     System.out.println("Cliente conectado: " + client.getInetAddress().getHostAddress());
-                    clientHandler = new ClientHandler(client, ACL);
+                    clientHandler = new ClientHandler(client, ACL, gui);
 
                     //clientHandler.setClientSocket(client); // añadir el socket
 

@@ -10,8 +10,8 @@ import java.io.PrintWriter;
 
 
 public class SetTitle extends Command {
-    public SetTitle(String comamand, JFrame windows) {
-        super(comamand, windows);
+    public SetTitle(String command, GUI gui) {
+        super(command, gui);
     }
 
     @Override
@@ -24,7 +24,7 @@ public class SetTitle extends Command {
             ParamFormatter title = new ParamFormatter(this.params);
 
             // pasa a string el primer argumento
-            GUI.frame.setTitle(title.asString(0));
+            gui.frame.setTitle(title.asString(0));
         }
         this.ret_client(out); // retornar
         return null;

@@ -17,7 +17,7 @@ public class GUI
         implements KeyListener, MouseListener, MouseMotionListener {
 
     /** Dimensiones de la pantalla del dispositivo */
-    private static final Dimension TAMANO_PANTALLA = Toolkit.getDefaultToolkit().getScreenSize();
+    static final Dimension TAMANO_PANTALLA = Toolkit.getDefaultToolkit().getScreenSize();
 
     /** Altura de la pantalla */
     static final int ALTURA = TAMANO_PANTALLA.height;
@@ -25,19 +25,16 @@ public class GUI
     /** Ancho de la pantalla */
     static final int ANCHO = TAMANO_PANTALLA.width;
 
-    /** Instancia de la clase GUI, utilizada para repintar la interfaz */
-    public static GUI dotDrawer;
-
     /** Ventana principal del emulador */
-    public static JFrame frame;
+    public JFrame frame;
 
     /** Buffer de imagen para dibujar el contenido */
     private BufferedImage buffer;
 
     /** Hilo para actualizar la pantalla */
-    public static RepaintThread update_thread;
+    public RepaintThread update_thread;
 
-    public static String BufferKeboard; // String donde almacenar todas las teclas pulsadas
+    public String BufferKeboard; // String donde almacenar todas las teclas pulsadas
 
     // velocidad de seguimiento del raton
     public float interpolationFactor = 0.9f;
@@ -46,7 +43,9 @@ public class GUI
     public Point targetPosition = new Point(0, 0);
     public Point currentPosition = new Point(0, 0);
     public boolean isMousePressed = false;
-    public static Color colorMouse = new Color(255, 0,0, 64); // color del clic
+    public Color colorMouse = new Color(255, 0,0, 64); // color del clic
+
+    public Focus foco;
 
     /**
      * Constructor de la clase `GUI`. Inicializa la ventana y el buffer de imagen.
@@ -70,7 +69,7 @@ public class GUI
         g2d.fillRect(0, 0, scaledWidth, scaledHeight);
         g2d.dispose();
 
-        update_thread = new RepaintThread(true);
+        update_thread = new RepaintThread(true, this);
         // iniciar el hilo que repinta la ventana
         new Thread(update_thread).start();
 
@@ -84,7 +83,6 @@ public class GUI
         frame.setResizable(false);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        dotDrawer = this;
         frame.add(this);
 
         frame.setPreferredSize(new Dimension(scaledWidth, scaledHeight));
@@ -101,7 +99,10 @@ public class GUI
 
 
         frame.setVisible(true);
-        repaint_all(); // Pinta el fondo negro al inicio
+        repaint_all(); // Pinta el fondo negro al inicioç
+
+
+        this.foco = new Focus(this, 0, "root");
     }
 
     /**
@@ -167,7 +168,7 @@ public class GUI
         g2d.drawImage(buffer, 0, 0, this);
 
         // Dibujar cada foco dentro del buffer
-        for (Focus focus : Focus.stack_focus_root.values()) {
+        for (Focus focus : this.foco.stack_focus_root.values()) {
             focus.render(g2d, buffer);
         }
 

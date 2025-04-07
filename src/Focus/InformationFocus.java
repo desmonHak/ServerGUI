@@ -15,7 +15,9 @@ public class InformationFocus {
     // Copia del área de fondo antes de dibujar el foco
     private transient BufferedImage backgroundBackup;
 
-    public InformationFocus(int x, int y, int width, int height, Color color) {
+    private GUI gui;
+
+    public InformationFocus(GUI gui, int x, int y, int width, int height, Color color) {
         this.x = x;
         this.y = y;
         this.height = 1;
@@ -23,7 +25,8 @@ public class InformationFocus {
         this.color = color;
         buffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         paint(); // pintar
-        GUI.dotDrawer.repaint_all(); // repintar la ventana
+        this.gui = gui;
+        gui.repaint_all(); // repintar la ventana
     }
     // Método para obtener el buffer del foco
     public BufferedImage getBuffer() {

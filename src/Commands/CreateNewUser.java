@@ -2,17 +2,15 @@ package src.Commands;
 
 import java.io.PrintWriter;
 import java.security.NoSuchAlgorithmException;
-import javax.swing.*;
-
 import src.ACL.Groups;
 import src.ACL.SerializableObjects;
 import src.ACL.Users;
-import src.Errors.PasswordError;
+import src.GUI;
 import src.Pair;
 
 public class CreateNewUser extends Command{
-    public CreateNewUser(String command, JFrame windows) {
-        super(command, windows);
+    public CreateNewUser(String command, GUI gui) {
+        super(command, gui);
     }
 
     @Override

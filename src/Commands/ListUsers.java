@@ -3,6 +3,7 @@ package src.Commands;
 import src.ACL.Groups;
 import src.ACL.SerializableObjects;
 import src.ACL.Users;
+import src.GUI;
 import src.Pair;
 
 import javax.swing.*;
@@ -10,8 +11,8 @@ import java.io.PrintWriter;
 import java.security.NoSuchAlgorithmException;
 
 public class ListUsers extends Command{
-    public ListUsers(String command, JFrame windows) {
-        super(command, windows);
+    public ListUsers(String command, GUI gui) {
+        super(command, gui);
     }
 
     @Override

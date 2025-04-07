@@ -24,6 +24,8 @@ public class Focus {
     // información sobre el foco
     public InformationFocus information;
 
+    public GUI gui;
+
     public static String getLastNameFocus(String[] string) {
         return string[string.length - 1];
     }
@@ -42,6 +44,7 @@ public class Focus {
             }
         }
     }
+
 
     /*
      * obtiene el Foco padre de un foco hijo
@@ -70,15 +73,16 @@ public class Focus {
         subfoco.stack_focus_local.remove(getLastNameFocus(arr_ids));
     }
 
-    public Focus(
-        int id_focus, 
-        String name_focus, 
+    public Focus(GUI gui,
+        int id_focus,
+        String name_focus,
         HashMap<String, Focus> stack_focus_local
         ) {
+        this.gui = gui;
         this.id_focus = id_focus;
         this.name_focus = name_focus;
         this.stack_focus_local = stack_focus_local;
-        this.information = new InformationFocus(
+        this.information = new InformationFocus(gui,
             0, 0, 1, 1, Color.BLUE);//GUI.dotDrawer.getBackground());
     }
     public void render(Graphics2D g, BufferedImage guiBuffer) {
@@ -86,22 +90,32 @@ public class Focus {
             information.paint();  // Asegurar que la información del foco se dibuja
             information.render(g, guiBuffer);
         }
-    
+
         // Renderizar subfocos
         for (Focus subFocus : stack_focus_local.values()) {
             subFocus.render(g, guiBuffer);
         }
     }
-    
-    public Focus(int id_focus, String name_focus) {
-        // root.foco1.subfoco1
-        // Separar la ruta por puntos, por ejemplo: "root.a"
+
+
+    // Método para añadir subfocos
+    public void addSubFocus(Focus child) {
+        if (child != null) {
+            stack_focus_local.put(child.name_focus, child);
+        }
+    }
+    public Focus(GUI gui, int id_focus, String name_focus) {
+        this.gui = gui;
+        this.id_focus = id_focus;
+        this.name_focus = name_focus;
+        this.information = new InformationFocus(gui, 0, 0, 1, 1, Color.BLUE);
+
         String[] arr_ids = name_focus.split("\\.");
         // Reasignar name_focus al último token (por ejemplo, "a")
         this.name_focus = arr_ids[arr_ids.length - 1];
         this.id_focus = id_focus;
         this.stack_focus_local = new HashMap<>();
-        this.information = new InformationFocus(0, 0, 1, 1, Color.BLUE);//GUI.dotDrawer.getBackground());
+        this.information = new InformationFocus(gui,0, 0, 1, 1, Color.BLUE);//GUI.dotDrawer.getBackground());
 
         // El primer token debe ser "root"
         if (!arr_ids[0].equalsIgnoreCase("root")) {
@@ -112,14 +126,14 @@ public class Focus {
         Focus root = stack_focus_root.get("root");
         if (root == null) {
             if (arr_ids.length == 1) {
-                this.information.width = GUI.frame.getWidth();
-                this.information.height = GUI.frame.getHeight();
+                this.information.width = gui.frame.getWidth();
+                this.information.height = gui.frame.getHeight();
                 stack_focus_root.put("root", this);
                 root = this;
             } else {
-                root = new Focus(0, "root", new HashMap<String, Focus>());
-                root.information.width = GUI.frame.getWidth();
-                root.information.height = GUI.frame.getHeight();
+                root = new Focus(gui,0, "root", new HashMap<String, Focus>());
+                root.information.width = gui.frame.getWidth();
+                root.information.height = gui.frame.getHeight();
                 root.information.color = Color.BLACK;
                 stack_focus_root.put("root", root);
             }
@@ -137,7 +151,7 @@ public class Focus {
                     parent = this; // El foco actual es el final de la cadena
                 } else {
                     // Crear un subfoco intermedio
-                    child = new Focus(0, token, new HashMap<String, Focus>());
+                    child = new Focus(gui, 0, token, new HashMap<String, Focus>());
                     parent.stack_focus_local.put(token, child);
                     parent = child;
                 }

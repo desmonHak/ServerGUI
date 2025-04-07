@@ -1,12 +1,10 @@
 package src.Commands;
 
+import java.io.PrintWriter;
 import src.ACL.Groups;
 import src.ACL.Users;
 import src.GUI;
 import src.Pair;
-
-import javax.swing.*;
-import java.io.PrintWriter;
 
 public class GetKeyboard extends Command {
     /**
@@ -14,10 +12,10 @@ public class GetKeyboard extends Command {
      * Analiza la cadena para extraer el identificador del comando y sus parámetros.
      *
      * @param command La cadena que representa el comando completo.
-     * @param windows La ventana de la interfaz gráfica donde se ejecutará el comando.
+     * @param gui La ventana de la interfaz gráfica donde se ejecutará el comando.
      */
-    public GetKeyboard(String command, JFrame windows) {
-        super(command, windows);
+    public GetKeyboard(String command, GUI gui) {
+        super(command, gui);
     }
 
     @Override
@@ -25,7 +23,7 @@ public class GetKeyboard extends Command {
         if (this.id.equalsIgnoreCase("getKeyboard")
                 && does_he_have_permissions(dataUser, this.getClass())) {
             // getKeyboard<>
-            this.ret_client(out, "\"%s\"".formatted(GUI.BufferKeboard));
+            this.ret_client(out, "\"%s\"".formatted(gui.BufferKeboard));
         }
         return null;
     }
